@@ -3,6 +3,8 @@ import {StyleSheet, View, ScrollView, TouchableOpacity } from 'react-native'
 import { Block, Text } from '../components';
 import * as theme from '../theme';
 import mocks from '../setting';
+import GradientHeader from "react-native-gradient-header";
+
 //import { LineChart, Path } from 'react-native-svg-charts'
 
 import Overview from './Overview'
@@ -22,23 +24,15 @@ class Dashboard extends Component{
         
         return(
             <Block style={styles.dashboard}>
-                <Block style={styles.oval}>
-                    <Block column>
-                        <Text welcome>Welcome</Text>
-                        <Text name>LUCETE</Text>
-                    </Block>
-
-                    <Block row style={{paddingVertical: 10}}>
-                        <Block flex={1.5} row style={{alignItems: 'flex-end'}}>
-                            <Text h1>34</Text>
-                            <Text h1 size={34} height={80} weight={'600'} spacing={0.1}>c</Text>
-                        </Block>
-                        <Block  flex={1} column>
-                            <Text caption>Humidity</Text>
-                            
-                        </Block>
-                    </Block>
+                <Block flex={0.5}>
+                    <GradientHeader
+                            title="LUCETE"
+                            subtitle="Have a nice day with Lucete"
+                            gradientColors={["#00416A", "#E4E5E6"]}
+                            imageSource={require("../assets/images/icons/profile.jpg")}
+                    />
                 </Block>
+                
 
                 <ScrollView contentContainerStyle={styles.buttons} showsVerticalScrollIndicator={false} style={{paddingHorizontal: theme.sizes.base*2}} >
                     <Block column  space="around">
@@ -88,6 +82,8 @@ class Dashboard extends Component{
                                 </Block>
                             </TouchableOpacity>
                         </Block>
+
+                        
                     </Block>
                 </ScrollView>
             </Block>

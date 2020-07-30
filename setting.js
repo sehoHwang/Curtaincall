@@ -9,7 +9,7 @@ export default {
         icon: ({size, color, ...props}) => (
             <Foundation
              size={size || theme.sizes.font}
-             color='royalblue'
+             color='#ff7f50'
              name='mobile-signal'
              {...props}
              />
@@ -20,7 +20,7 @@ export default {
         name: 'LUCETE2',
         icon: ({size, color, ...props}) => (
             <Foundation size={size || theme.sizes.font}
-             color='royalblue'
+             color='#ff7f50'
              name='mobile-signal'
              {...props}
              />
@@ -31,7 +31,7 @@ export default {
         name: 'LUCETE3',
         icon: ({size, color, ...props}) => (
             <Foundation size={size || theme.sizes.font}
-             color='royalblue'
+             color='#ff7f50'
              name='mobile-signal'
              {...props}
              />
@@ -42,7 +42,7 @@ export default {
         name: 'LUCETE4',
         icon: ({size, color, ...props}) => (
             <Foundation size={size || theme.sizes.font}
-             color='royalblue'
+             color='#ff7f50'
              name='mobile-signal'
              {...props}
              />
@@ -53,7 +53,7 @@ export default {
         name: 'LUCETE5',
         icon: ({size, color, ...props}) => (
             <Foundation size={size || theme.sizes.font}
-             color='royalblue'
+             color='#ff7f50'
              name='mobile-signal'
              {...props}
              />
@@ -64,7 +64,7 @@ export default {
         name: 'LUCETE6',
         icon: ({size, color, ...props}) => (
             <Foundation size={size || theme.sizes.font}
-             color='royalblue'
+             color='#ff7f50'
              name='mobile-signal'
              {...props}
              />

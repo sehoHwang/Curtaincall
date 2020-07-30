@@ -5,7 +5,7 @@ import Text from './Text'
 import Icon from './Icon'
 import * as theme from '../theme'
 
-export default class Card extends Component {
+export default class Card2 extends Component {
     static defaultProps = {
 
         shadow: true,
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 25,
     backgroundColor: theme.colors.white,
-    borderRadius:10,
+    
     
   },
   header: {

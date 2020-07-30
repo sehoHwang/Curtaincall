@@ -14,6 +14,7 @@ const colors = {
     purple: 'purple',
     royalblue: 'royalblue',
     caption: '#B0BAC9',
+    pinkorange: '#f7ebe6',
   };
   
   const sizes = {

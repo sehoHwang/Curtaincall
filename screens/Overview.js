@@ -1,16 +1,20 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TouchableWithoutFeedback, ScrollView, SafeAreaView, Image, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableWithoutFeedback, ScrollView, SafeAreaView, Image, TouchableOpacity, Modal } from 'react-native';
 import * as theme from '../theme'
-import  {Block, Block2, Card, Icon, Label} from '../components'
+import  {Block, Block2, Card, Icon, Label, Card2} from '../components'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {Text} from '../components'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import Animated from 'react-native-reanimated';
+import BottomPopup from './BottomPopup';
+import LinearGradient from 'react-native-linear-gradient';
+
 
 const styles = StyleSheet.create({
     overview: {
         flex: 1,
-        marginHorizontal: 25,
-        backgroundColor: '#f2f6fc',
+        marginHorizontal: 15,
+        backgroundColor: '#faf7f7',
     },
     card: {
         backgroundColor: theme.colors.white,
@@ -40,10 +44,36 @@ const styles = StyleSheet.create({
     
 })
 
+const popupList = [
+    {
+        id:1,
+        name: 'Task'
+    },
+    {
+        id:2,
+        name: 'Setting'
+    },
+    {
+        id:3,
+        name: 'Message'
+    },
+]
+
 
 class Overview extends Component{
-    static navigationOptions = {
-        title: <Text h4 style={{color:'royalblue'}}>LUCETE</Text>,
+
+    popupRef = React.createRef();
+
+    onShowPopup = () => {
+        this.popupRef.show()
+    }
+    
+    onClosePopup = () => {
+        this.popupRef.close()
+    }
+
+    static navigationOptions = ({navigation}) => ({
+        title: <Text h4 style={{color:'black'}}>LUCETE</Text>,
         headerTitleStyle: {
             paddingLeft: 110,
             color: 'royalblue'
@@ -51,14 +81,14 @@ class Overview extends Component{
         headerLeft: ({onPress}) => (
             <Block>
                 <TouchableWithoutFeedback onPress={() => onPress()}>
-                    <FontAwesome size={20} color={'royalblue'} name='arrow-left' />
+                    <FontAwesome size={20} color={'#ff7f50'} name='arrow-left' />
                 </TouchableWithoutFeedback>
             </Block>
         ),
-        headerRight: ({onPress}) => (
+        headerRight: (
             <Block>
-                <TouchableWithoutFeedback onPress={() => onPress()}>
-                    <MaterialCommunityIcons  name='dots-vertical' size={20} color={'royalblue'}/>
+                <TouchableWithoutFeedback onPress={this.onShowPopup}>
+                    <MaterialCommunityIcons  name='dots-vertical' size={20} color={'#ff7f50'}/>
                 </TouchableWithoutFeedback>
             </Block>
         ),
@@ -72,43 +102,33 @@ class Overview extends Component{
             backgroundColor: '#fff',
             elevation: 0,
         }
-    }
+    });
 
-    renderChart = () => {
-        return(
-            <Block2 row style={styles.card}>
-                <Block2 flex={1.5} middle>
-                    <Text h2>86</Text>
-                    <Text caption>OPERATING SCORE</Text>
-                </Block2>
-                <Block2>
-                    <Text paragraph color="gray">
-                        LUCETE는 기상 api를 이용하여 
-                        소비자들의 삶의 질을 향상시켜주는
-                        iot를 접목시킨 친환경 커튼 엔진입니다.
-                    </Text>
-                </Block2>
-            </Block2>
-        )
-    }
+    
     render(){
+        const translateY = new Animated.Value(0);
+
         return(
-            <ScrollView style={{flex:1, backgroundColor: '#f2f6fc'}} showsVerticalScrollIndicator={false}>
+            <ScrollView style={{flex:1, backgroundColor: '#faf7f7'}} showsVerticalScrollIndicator={false}>
+                <Card2 col middle style={[{marginTop: 0, borderWidth: 0, shadow:{shadowColor:'#f79e7c', elevation:0}, backgroundColor: '#f7b297'}]}>
+                   
+                            <Block2 flex={2} style={{marginRight: 20}}>
+                                <Text h3 bold style={{color: '#fff'}}>우선순위 모드</Text>
+                                <Text paragraph color = "pinkorange" style={{marginTop: 3,}}>Frequently used</Text>
+                            </Block2>
+                            <Block2 row flex={2} style={{marginTop: 10, }}>
+                                <Block2 flex={1} style={{padding: 25, backgroundColor: '#f7b9a1', marginRight: 10, height:70, borderRadius: 10}}>
+                                    
+                                </Block2>
+                                <Block2 flex={1} style={{padding: 25, backgroundColor: '#f7b9a1', marginLeft:10, borderRadius: 10}}>
+
+                                </Block2>
+                            </Block2>
+                       
+                    </Card2>
                 <SafeAreaView style={styles.overview}>
                     
-                        <Card row middle style={[{marginTop: 25,}]}>
-                            <Block2 flex={1.2} center middle style={{marginRight: 20}}>
-                                <Text h2 light height={43} size={36} spacing={-0.45} style={{marginTop: 17}}>86</Text>
-                                <Text caption center style={{paddingHorizontal:16, marginTop: 3}}>OPERATING SCORE</Text>
-                            </Block2>
-                            <Block2>
-                                <Text paragraph color="gray">
-                                    LUCETE는 기상 api를 이용하여 
-                                    소비자들의 삶의 질을 향상시켜주는
-                                    iot를 접목시킨 친환경 커튼 엔진입니다.
-                                </Text>
-                            </Block2>
-                        </Card>
+                        
 
                         <Block2 row style={[{marginTop: 18,}]}>
                             <Card middle style={[{marginRight: 7}]}>
@@ -124,22 +144,25 @@ class Overview extends Component{
                         </Block2>
 
                         <Card 
-                            title="TODAY'S TRIPS"
+                            title="모드 선택"
                              style={[{marginTop: 18}]}>
-                            <Block2 row right>
-                                <Block2 row center right>
-                                    <Label color="royalblue"/>
-                                    <Text paragraph color="gray">Today</Text>
+                           <Block2 row>
+                                <Block2 style={{padding:20}}>
+                                    <Text>에너지 효율 모드</Text>
                                 </Block2>
-                                <Block2 row center right>
-                                    <Label color="blue"/>
-                                <Text paragraph color="gray">Yesterday</Text>
+                                <Block2  style={{padding:20}}>
+                                    <Text>조경 모드</Text>
                                 </Block2>
-                                
                             </Block2>
-                            <Block2>
-                                <Text>Chart</Text>
+                            <Block2 row style={{marginTop: 18}}>
+                                <Block2  style={{padding:20}}>
+                                    <Text>방범 모드</Text>
+                                </Block2>
+                                <Block2  style={{padding:20}}>
+                                    <Text>알람 모드</Text>
+                                </Block2>
                             </Block2>
+                           
                         </Card>
 
                         <Card 
@@ -217,7 +240,9 @@ class Overview extends Component{
                             
                         </Card>
                 </SafeAreaView>
+                <BottomPopup title="Demo Popup" ref={(target) => this.popupRef = target} onTouchOutside={this.onClosePopup} data={popupList}></BottomPopup>
             </ScrollView>
+            
         )
     }
 }

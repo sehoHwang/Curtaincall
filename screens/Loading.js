@@ -79,7 +79,7 @@ class LoadingScene extends Component {
                 justifyContent: 'center',
               }}
               size="large"
-              color="#5257f2"
+              color="#fcb89f"
             />
           ) : null}
         </Animated.View>
@@ -97,7 +97,7 @@ export default LoadingScene;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#5257F2',
+    backgroundColor: '#fcb89f',
     justifyContent: 'center',
     alignItems: 'center',
   },

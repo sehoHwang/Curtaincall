@@ -50,6 +50,7 @@ export default class Typography extends Component {
       color && color === 'gray2' && styles.gray2,
       color && color === 'gray3' && styles.gray3,
       color && color === 'caption' && styles.caption,
+      color && color === 'pinkorange' && styles.pinkorange,
 
       size && { fontSize: size },
       bold && styles.bold,
@@ -84,6 +85,7 @@ const styles = StyleSheet.create({
   black: { color: theme.colors.black, },
   white: { color: theme.colors.white, },
   gray: { color: theme.colors.gray, },
+  pinkorange: { color: theme.colors.pinkorange, },
   welcome: theme.fonts.welcome,
   name: theme.fonts.name,
   h1: theme.fonts.h1,

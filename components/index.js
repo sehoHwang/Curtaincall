@@ -4,6 +4,7 @@ import Block2 from './Block2';
 import Card from './Card';
 import Icon from './Icon';
 import Label from './Label';
+import Card2 from './Card2';
 //import PanSlider from './PanSlider';
 
 export {
@@ -13,5 +14,6 @@ export {
   Card,
   Icon,
   Label,
+  Card2,
   //PanSlider,
 }

@@ -5,6 +5,7 @@ import * as theme from '../theme';
 import mocks from '../setting';
 import GradientHeader from "react-native-gradient-header";
 
+
 //import { LineChart, Path } from 'react-native-svg-charts'
 
 import Overview from './Overview'
@@ -22,14 +23,15 @@ class Dashboard extends Component{
         const FifthIcon = setting['LUCETE5'].icon;
         const SixthIcon = setting['LUCETE6'].icon;
         
+        
         return(
             <Block style={styles.dashboard}>
                 <Block flex={0.5}>
                     <GradientHeader
                             title="LUCETE"
                             subtitle="Have a nice day with Lucete"
-                            gradientColors={["#00416A", "#E4E5E6"]}
-                            imageSource={require("../assets/images/icons/profile.jpg")}
+                            gradientColors={["#ff7f50", "#E4E5E6"]}
+                            
                     />
                 </Block>
                 
@@ -86,6 +88,7 @@ class Dashboard extends Component{
                         
                     </Block>
                 </ScrollView>
+               
             </Block>
            
         )

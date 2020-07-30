@@ -2,7 +2,7 @@ import { Modal, Dimensions, TouchableWithoutFeedback, StyleSheet, View, Text, Fl
 import React, {Component} from 'react';
 const deviceHeight = Dimensions.get('window').height;
 
-export class BottomPopup extends Component{
+export default class BottomPopup extends Component{
     constructor(props){
         super(props)
         this.state={
@@ -18,7 +18,7 @@ export class BottomPopup extends Component{
         this.setState({show : false})
     }
 
-    renderOutsideTouchable = () => {
+    renderOutsideTouchable(onTouch){
         const view = <View style={{flex: 1, width: '100%'}} />
         if(!onTouch) return view
 

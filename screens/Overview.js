@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TouchableWithoutFeedback, ScrollView, SafeAreaView, Image, TouchableOpacity, Modal } from 'react-native';
+import { View, StyleSheet, TouchableWithoutFeedback, ScrollView, SafeAreaView, Image, TouchableOpacity, Modal, Switch } from 'react-native';
 import * as theme from '../theme'
 import  {Block, Block2, Card, Icon, Label, Card2} from '../components'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -8,6 +8,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Animated from 'react-native-reanimated';
 import BottomPopup from './BottomPopup';
 import LinearGradient from 'react-native-linear-gradient';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 
 const styles = StyleSheet.create({
@@ -85,7 +87,7 @@ class Overview extends Component{
                 </TouchableWithoutFeedback>
             </Block>
         ),
-        headerRight: (
+        headerRight: ({onPress}) => (
             <Block>
                 <TouchableWithoutFeedback onPress={this.onShowPopup}>
                     <MaterialCommunityIcons  name='dots-vertical' size={20} color={'#ff7f50'}/>
@@ -147,19 +149,27 @@ class Overview extends Component{
                             title="모드 선택"
                              style={[{marginTop: 18}]}>
                            <Block2 row>
-                                <Block2 style={{padding:20}}>
-                                    <Text>에너지 효율 모드</Text>
+                                <Block2 center style={{padding:20, borderRightWidth: 0.5}}>
+                                    <SimpleLineIcons name="energy" size={25} style={{marginBottom:10}}/>
+                                    <Text bold>에너지 효율 모드</Text>
+                                    <Switch></Switch>
                                 </Block2>
-                                <Block2  style={{padding:20}}>
-                                    <Text>조경 모드</Text>
+                                <Block2 center style={{padding:20}}>
+                                    <Entypo name="flower" size={25} style={{marginBottom: 10}}/>
+                                    <Text bold>조경 모드</Text>
+                                    <Switch></Switch>
                                 </Block2>
                             </Block2>
                             <Block2 row style={{marginTop: 18}}>
-                                <Block2  style={{padding:20}}>
-                                    <Text>방범 모드</Text>
+                                <Block2 center style={{padding:20, borderRightWidth: 0.5}}>
+                                    <MaterialCommunityIcons name="shield-home-outline" size={25} style={{marginBottom: 10}}/>
+                                    <Text bold>방범 모드</Text>
+                                    <Switch></Switch>
                                 </Block2>
-                                <Block2  style={{padding:20}}>
-                                    <Text>알람 모드</Text>
+                                <Block2 center style={{padding:20}}>
+                                    <MaterialCommunityIcons name="alarm" size={25} style={{marginBottom: 10}}/>
+                                    <Text bold>알람 모드</Text>
+                                    <Switch></Switch>
                                 </Block2>
                             </Block2>
                            
@@ -239,8 +249,9 @@ class Overview extends Component{
                             </Block2>
                             
                         </Card>
+                        <BottomPopup title="Demo Popup" ref={(target) => this.popupRef = target} onTouchOutside={this.onClosePopup} data={popupList}></BottomPopup>
                 </SafeAreaView>
-                <BottomPopup title="Demo Popup" ref={(target) => this.popupRef = target} onTouchOutside={this.onClosePopup} data={popupList}></BottomPopup>
+                
             </ScrollView>
             
         )

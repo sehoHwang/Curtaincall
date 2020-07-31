@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import { View, StyleSheet, TouchableWithoutFeedback, ScrollView, SafeAreaView, Image, TouchableOpacity, Modal, Switch } from 'react-native';
 import * as theme from '../theme'
 import  {Block, Block2, Card, Icon, Label, Card2} from '../components'
@@ -10,7 +10,7 @@ import BottomPopup from './BottomPopup';
 import LinearGradient from 'react-native-linear-gradient';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
-
+import ToggleSwitch from 'toggle-switch-react-native'
 
 const styles = StyleSheet.create({
     overview: {
@@ -74,6 +74,25 @@ class Overview extends Component{
         this.popupRef.close()
     }
 
+    state = {
+        swtichValue: false,
+        inOnEnergySwitch: false,
+        isOnLandScapeSwitch: false,
+        isOnPreventionSwitch: false,
+        isOnAlarmSwitch: false,
+        isOnFrequent1: false,
+        isOnFrequent2: false,
+        
+    }
+
+    onToggle(isOn) {
+        console.log("Changed to " + isOn);
+      }
+
+    toggleSwitch = (value) => {
+        this.setState({swtichValue: value})
+    }
+
     static navigationOptions = ({navigation}) => ({
         title: <Text h4 style={{color:'black'}}>LUCETE</Text>,
         headerTitleStyle: {
@@ -109,7 +128,8 @@ class Overview extends Component{
     
     render(){
         const translateY = new Animated.Value(0);
-
+        
+        
         return(
             <ScrollView style={{flex:1, backgroundColor: '#faf7f7'}} showsVerticalScrollIndicator={false}>
                 <Card2 col middle style={[{marginTop: 0, borderWidth: 0, shadow:{shadowColor:'#f79e7c', elevation:0}, backgroundColor: '#f7b297'}]}>
@@ -119,11 +139,43 @@ class Overview extends Component{
                                 <Text paragraph color = "pinkorange" style={{marginTop: 3,}}>Frequently used</Text>
                             </Block2>
                             <Block2 row flex={2} style={{marginTop: 10, }}>
-                                <Block2 flex={1} style={{padding: 25, backgroundColor: '#f7b9a1', marginRight: 10, height:70, borderRadius: 10}}>
-                                    
+                                <Block2 flex={1} center middle style={{padding: 25, backgroundColor: '#f7b9a1', marginRight: 10, height:70, borderRadius: 10}}>
+                                    <Text light style={{marginBottom:10, color: '#fff'}}>우선순위 1</Text>
+                                        <ToggleSwitch
+                                            isOn={false}
+                                            onColor='#faa889'
+                                            offColor='#ebe2df'
+                                            size='small'
+                                            isOn={this.state.isOnFrequent1}
+                                            onToggle={isOnFrequent1 => {
+                                                this.setState({isOnFrequent1});
+                                                this.setState({isOnFrequent2: false});
+                                                this.setState({isOnEnergySwitch: false});
+                                                this.setState({isOnLandScapeSwitch: false});
+                                                this.setState({isOnPreventionSwitch: false});
+                                                this.setState({isOnAlarmSwitch: false});
+                                                this.onToggle(isOnFrequent1);
+                                            }}
+                                        />
                                 </Block2>
-                                <Block2 flex={1} style={{padding: 25, backgroundColor: '#f7b9a1', marginLeft:10, borderRadius: 10}}>
-
+                                <Block2 flex={1} center middle style={{padding: 25, backgroundColor: '#f7b9a1', marginRight: 10, height:70, borderRadius: 10}}>
+                                    <Text light style={{marginBottom:10, color: '#fff'}}>우선순위 2</Text>
+                                        <ToggleSwitch
+                                            isOn={false}
+                                            onColor='#faa889'
+                                            offColor='#ebe2df'
+                                            size='small'
+                                            isOn={this.state.isOnFrequent2}
+                                            onToggle={isOnFrequent2 => {
+                                                this.setState({isOnFrequent2});
+                                                this.setState({isOnFrequent1: false});
+                                                this.setState({isOnEnergySwitch: false});
+                                                this.setState({isOnLandScapeSwitch: false});
+                                                this.setState({isOnPreventionSwitch: false});
+                                                this.setState({isOnAlarmSwitch: false});
+                                                this.onToggle(isOnFrequent2);
+                                            }}
+                                        />
                                 </Block2>
                             </Block2>
                        
@@ -151,25 +203,85 @@ class Overview extends Component{
                            <Block2 row>
                                 <Block2 center style={{padding:20, borderRightWidth: 0.5}}>
                                     <SimpleLineIcons name="energy" size={25} style={{marginBottom:10}}/>
-                                    <Text bold>에너지 효율 모드</Text>
-                                    <Switch></Switch>
+                                    <Text bold style={{marginBottom:10}}>에너지 효율 모드</Text>
+                                    <ToggleSwitch
+                                        isOn={false}
+                                        onColor='#faa889'
+                                        offColor='#e0d8d5'
+                                        size='small'
+                                        isOn={this.state.isOnEnergySwitch}
+                                        onToggle={isOnEnergySwitch => {
+                                            this.setState({isOnEnergySwitch});
+                                            this.setState({isOnFrequent2: false});
+                                            this.setState({isOnPreventionSwitch: false});
+                                            this.setState({isOnLandScapeSwitch: false});
+                                            this.setState({isOnFrequent1: false});
+                                            this.setState({isOnAlarmSwitch: false});
+                                            this.onToggle(isOnEnergySwitch);
+                                        }}
+                                    />
                                 </Block2>
                                 <Block2 center style={{padding:20}}>
                                     <Entypo name="flower" size={25} style={{marginBottom: 10}}/>
-                                    <Text bold>조경 모드</Text>
-                                    <Switch></Switch>
+                                    <Text bold style={{marginBottom:10}}>조경 모드</Text>
+                                    <ToggleSwitch
+                                        isOn={false}
+                                        onColor='#faa889'
+                                        offColor='#e0d8d5'
+                                        size='small'
+                                        isOn={this.state.isOnLandScapeSwitch}
+                                        onToggle={isOnLandScapeSwitch => {
+                                            this.setState({isOnLandScapeSwitch});
+                                            this.setState({isOnFrequent2: false});
+                                            this.setState({isOnEnergySwitch: false});
+                                            this.setState({isOnPreventionSwitch: false});
+                                            this.setState({isOnFrequent1: false});
+                                            this.setState({isOnAlarmSwitch: false});
+                                            this.onToggle(isOnLandScapeSwitch);
+                                        }}
+                                    />
                                 </Block2>
                             </Block2>
                             <Block2 row style={{marginTop: 18}}>
                                 <Block2 center style={{padding:20, borderRightWidth: 0.5}}>
                                     <MaterialCommunityIcons name="shield-home-outline" size={25} style={{marginBottom: 10}}/>
-                                    <Text bold>방범 모드</Text>
-                                    <Switch></Switch>
+                                    <Text bold style={{marginBottom:10}}>방범 모드</Text>
+                                    <ToggleSwitch
+                                        isOn={false}
+                                        onColor='#faa889'
+                                        offColor='#e0d8d5'
+                                        size='small'
+                                        isOn={this.state.isOnPreventionSwitch}
+                                        onToggle={isOnPreventionSwitch => {
+                                            this.setState({isOnPreventionSwitch});
+                                            this.setState({isOnFrequent2: false});
+                                            this.setState({isOnEnergySwitch: false});
+                                            this.setState({isOnLandScapeSwitch: false});
+                                            this.setState({isOnFrequent1: false});
+                                            this.setState({isOnAlarmSwitch: false});
+                                            this.onToggle(isOnPreventionSwitch);
+                                        }}
+                                    />
                                 </Block2>
                                 <Block2 center style={{padding:20}}>
                                     <MaterialCommunityIcons name="alarm" size={25} style={{marginBottom: 10}}/>
-                                    <Text bold>알람 모드</Text>
-                                    <Switch></Switch>
+                                    <Text bold style={{marginBottom:10}}>알람 모드</Text>
+                                    <ToggleSwitch
+                                        isOn={false}
+                                        onColor='#faa889'
+                                        offColor='#e0d8d5'
+                                        size='small'
+                                        isOn={this.state.isOnAlarmSwitch}
+                                        onToggle={isOnAlarmSwitch => {
+                                            this.setState({isOnPreventionSwitch: false});
+                                            this.setState({isOnFrequent2: false});
+                                            this.setState({isOnEnergySwitch: false});
+                                            this.setState({isOnLandScapeSwitch: false});
+                                            this.setState({isOnFrequent1: false});
+                                            this.setState({isOnAlarmSwitch});
+                                            this.onToggle(isOnAlarmSwitch);
+                                        }}
+                                    />
                                 </Block2>
                             </Block2>
                            

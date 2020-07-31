@@ -33,7 +33,7 @@ export default class BottomPopup extends Component{
         const {title} = this.props
         return(
             <View>
-                <Text style={{color:'182E44', fontSize:20, fontWeight:'500', margin:15}}>
+                <Text style={{color:'#182E44', fontSize:20, fontWeight:'500', margin:15}}>
                     {title}
                 </Text>
             </View>
@@ -65,7 +65,7 @@ export default class BottomPopup extends Component{
     }
 
     renderSeperator = () => {
-        <View style={{opacity: 0.1, backgroundColor: '182E44', height:1}}>
+        <View style={{opacity: 0.1, backgroundColor: '#182E44', height:1}}>
             
         </View>
     }

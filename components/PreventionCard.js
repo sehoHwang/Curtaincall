@@ -7,9 +7,10 @@ import * as theme from '../theme'
 
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import TimePicker from 'react-native-simple-time-picker';
 import moment from 'moment';
 
-export default class Card extends Component {
+export default class PreventionCard extends Component {
     static defaultProps = {
 
         shadow: true,
@@ -21,14 +22,19 @@ export default class Card extends Component {
       super()
       this.state = {
         isVisible: false,
-        chosenTime: ''
+        chosenHour: ''
       }
+  }
+
+  state = {
+    selectedHours: 0,
+    selectedMinutes: 0,
   }
 
   handlePicker= (time) => {
       this.setState({
           isVisible: false,
-          chosenTime: moment(time).format('HH:mm')
+          chosenHour: moment(time).format('HH')
       })
   }
 
@@ -46,7 +52,7 @@ export default class Card extends Component {
 
 
     renderHeader = () => {
-      const {isDatePickerVisible, setDatePickerVisibility} = this.state
+        const { selectedHours, selectedMinutes } = this.state;
       //const {date, mode, show} = this.state
         const { title, } = this.props;
         if(!title) return null;
@@ -55,14 +61,12 @@ export default class Card extends Component {
                 <Text caption>{title}</Text>
                 <TouchableOpacity onPress={this.showPicker}>
                     <Icon option />
-        </TouchableOpacity>
-        <DateTimePicker
-          isVisible={this.state.isVisible}
-          onConfirm={this.handlePicker}
-          onCancel={this.hidePicker}
-          mode={'time'}
-          display='spinner'
-      />
+                </TouchableOpacity>
+                <TimePicker
+                selectedHours={selectedHours}
+                selectedMinutes={selectedMinutes}
+                onChange={(hours, minutes) => this.setState({ selectedHours: hours, selectedMinutes: minutes })}
+                />
                 
             </Block2>
         )
@@ -82,7 +86,7 @@ export default class Card extends Component {
     return (
       <Block2 style={cardStyles} {...props}>
         {this.renderHeader()}
-        <Text middle center h2 bold2 style={{marginBottom:15}}>{this.state.chosenTime}</Text>
+        <Text middle center h2 bold2 style={{marginBottom:15}}>{this.state.selectedHours}</Text>
         {children}
       </Block2>
     )

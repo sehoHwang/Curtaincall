@@ -9,7 +9,7 @@ import DateTimePicker from 'react-native-modal-datetime-picker';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 
-export default class Card extends Component {
+export default class ModeCard extends Component {
     static defaultProps = {
 
         shadow: true,
@@ -25,26 +25,6 @@ export default class Card extends Component {
       }
   }
 
-  handlePicker= (time) => {
-      this.setState({
-          isVisible: false,
-          chosenTime: moment(time).format('HH:mm')
-      })
-  }
-
-  hidePicker = () => {
-      this.setState({
-          isVisible: false,
-      })
-  }
-
-  showPicker = () => {
-      this.setState({
-          isVisible: true
-      })
-  }
-
-
     renderHeader = () => {
       const {isDatePickerVisible, setDatePickerVisibility} = this.state
       //const {date, mode, show} = this.state
@@ -53,16 +33,6 @@ export default class Card extends Component {
         return(
             <Block2 row space="between" style={styles.header}>
                 <Text caption>{title}</Text>
-                <TouchableOpacity onPress={this.showPicker}>
-                    <Icon option />
-        </TouchableOpacity>
-        <DateTimePicker
-          isVisible={this.state.isVisible}
-          onConfirm={this.handlePicker}
-          onCancel={this.hidePicker}
-          mode={'time'}
-          display='spinner'
-      />
                 
             </Block2>
         )
@@ -82,7 +52,6 @@ export default class Card extends Component {
     return (
       <Block2 style={cardStyles} {...props}>
         {this.renderHeader()}
-        <Text middle center h2 bold2 style={{marginBottom:15}}>{this.state.chosenTime}</Text>
         {children}
       </Block2>
     )
@@ -98,7 +67,7 @@ const styles = StyleSheet.create({
     
   },
   header: {
-    paddingBottom: 10,
+    paddingBottom: 24,
   },
   border: {
     borderColor: theme.colors.shadow,

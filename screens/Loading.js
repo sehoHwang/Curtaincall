@@ -13,7 +13,7 @@ import {
 import {Actions} from 'react-native-router-flux';
 
 /* Logo */
-import Logo from '../assets/images/icons/LUCETE-LOGO.png';
+import Logo from '../assets/images/icons/LUCETE-LOGO2.png';
 
 
 class LoadingScene extends Component {

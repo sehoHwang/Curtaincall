@@ -1,7 +1,7 @@
 import React, { Component, } from 'react';
-import { View, StyleSheet, TouchableWithoutFeedback, ScrollView, SafeAreaView, Image, TouchableOpacity, Modal, Switch } from 'react-native';
+import { View, StyleSheet, TouchableWithoutFeedback, ScrollView, SafeAreaView, Image, TouchableOpacity, Modal, Switch, Platform } from 'react-native';
 import * as theme from '../theme'
-import  {Block, Block2, Card, Icon, Label, Card2} from '../components'
+import  {Block, Block2, Card, Icon, Label, Card2, ModeCard, PreventionCard} from '../components'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {Text} from '../components'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -11,6 +11,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import ToggleSwitch from 'toggle-switch-react-native'
+
+import DateTimePicker from 'react-native-modal-datetime-picker';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const styles = StyleSheet.create({
     overview: {
@@ -64,6 +67,31 @@ const popupList = [
 
 class Overview extends Component{
 
+    constructor() {
+        super()
+        this.state = {
+            isVisible: false,
+        }
+    }
+
+    handlePicker= () => {
+        this.setState({
+            isVisible: false
+        })
+    }
+
+    hidePicker = () => {
+        this.setState({
+            isVisible: false
+        })
+    }
+
+    showPicker = () => {
+        this.setState({
+            isVisible: true
+        })
+    }
+
     popupRef = React.createRef();
 
     onShowPopup = () => {
@@ -82,9 +110,9 @@ class Overview extends Component{
         isOnAlarmSwitch: false,
         isOnFrequent1: false,
         isOnFrequent2: false,
-        
-    }
 
+    }
+    
     onToggle(isOn) {
         console.log("Changed to " + isOn);
       }
@@ -106,7 +134,7 @@ class Overview extends Component{
                 </TouchableWithoutFeedback>
             </Block>
         ),
-        headerRight: ({onPress}) => (
+        headerRight: () => (
             <Block>
                 <TouchableWithoutFeedback onPress={this.onShowPopup}>
                     <MaterialCommunityIcons  name='dots-vertical' size={20} color={'#ff7f50'}/>
@@ -128,15 +156,20 @@ class Overview extends Component{
     
     render(){
         const translateY = new Animated.Value(0);
-        
-        
+
         return(
+            <View style={{flex:1}}>
             <ScrollView style={{flex:1, backgroundColor: '#faf7f7'}} showsVerticalScrollIndicator={false}>
                 <Card2 col middle style={[{marginTop: 0, borderWidth: 0, shadow:{shadowColor:'#f79e7c', elevation:0}, backgroundColor: '#f7b297'}]}>
                    
-                            <Block2 flex={2} style={{marginRight: 20}}>
-                                <Text h3 bold style={{color: '#fff'}}>우선순위 모드</Text>
-                                <Text paragraph color = "pinkorange" style={{marginTop: 3,}}>Frequently used</Text>
+                            <Block2 row flex={2} style={{marginRight: 20}}>
+                                <Block2>
+                                    <Text h3 bold style={{color: '#fff'}}>우선순위 모드</Text>
+                                    <Text paragraph color = "pinkorange" style={{marginTop: 3,}}>Frequently used</Text>
+                                </Block2>
+                                <Block2 style={{alignItems: 'flex-end', marginBottom: 20}}>
+                                    <MaterialCommunityIcons name="power" size={50} style={{backgroundColor: '#fff', borderRadius:30, color:'#ff7f50'}}/>
+                                </Block2>
                             </Block2>
                             <Block2 row flex={2} style={{marginTop: 10, }}>
                                 <Block2 flex={1} center middle style={{padding: 25, backgroundColor: '#f7b9a1', marginRight: 10, height:70, borderRadius: 10}}>
@@ -185,21 +218,26 @@ class Overview extends Component{
                         
 
                         <Block2 row style={[{marginTop: 18,}]}>
-                            <Card middle style={[{marginRight: 7}]}>
-                                <Icon vehicle />
-                                <Text h2 style={{marginTop: 17}}>1,428</Text>
-                                <Text paragraph color="gray">Vehicles on track</Text>
+                            <Card title="알람 모드 시간"
+                            middle style={[{marginRight: 7}]}>
+                                {/*<Icon vehicle />*/}
+                                {/*<TouchableWithoutFeedback onPress={this.showPicker}>
+                                    <MaterialCommunityIcons  name='dots-vertical' size={20} color={'#ff7f50'}/>
+                                        </TouchableWithoutFeedback>*/}
+                                {/*<Text h2 bold style={{marginTop: 15}}>7:00 AM</Text>*/}
+                                <Text paragraph color="gray">Set the Alarm</Text>
                             </Card>
-                            <Card middle style={[{marginLeft: 7}]}>
-                                <Icon distance />
-                                <Text h2 style={{marginTop: 17}}>158.3</Text>
-                                <Text paragraph color="gray">Distance driven</Text>
-                            </Card>
+                            <PreventionCard title="방범 모드 간격"
+                            middle style={[{marginLeft: 7}]}>
+                                {/*<Icon distance />*/}
+                                {/*<Text h2 bold style={{marginTop: 15}}>1hour</Text>*/}
+                                <Text paragraph color="gray">Set the Gap</Text>
+                            </PreventionCard>
                         </Block2>
 
-                        <Card 
+                        <ModeCard 
                             title="모드 선택"
-                             style={[{marginTop: 18}]}>
+                             style={[{marginTop: 18, marginBottom: 18}]}>
                            <Block2 row>
                                 <Block2 center style={{padding:20, borderRightWidth: 0.5}}>
                                     <SimpleLineIcons name="energy" size={25} style={{marginBottom:10}}/>
@@ -285,9 +323,9 @@ class Overview extends Component{
                                 </Block2>
                             </Block2>
                            
-                        </Card>
+                        </ModeCard>
 
-                        <Card 
+                        {/*<Card 
                             title="TOP DRIVERS"
                              style={[{marginTop: 18}]}>
                             <Block2 style={styles.driver}>
@@ -361,11 +399,23 @@ class Overview extends Component{
                             </Block2>
                             
                         </Card>
+                        
+                        */}
+                         
                         <BottomPopup title="Demo Popup" ref={(target) => this.popupRef = target} onTouchOutside={this.onClosePopup} data={popupList}></BottomPopup>
                 </SafeAreaView>
-                
-            </ScrollView>
+               
+                </ScrollView>
+                {/*<DateTimePicker
+                            isVisible={this.state.isVisible}
+                            onConfirm={this.handlePicker}
+                            onCancel={this.hidePicker}
+                />*/}
+            </View>
+           
             
+                
+          
         )
     }
 }

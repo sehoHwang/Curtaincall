@@ -16,7 +16,7 @@ const vehicleIcon = (
 
 const optionIcon = (
     <Image
-        source={require('../assets/images/icons/options.png')}
+        source={require('../assets/images/icons/options2.png')}
         style={{height: 16, width: 16}}/>
 )
 

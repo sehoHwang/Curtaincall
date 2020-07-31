@@ -22,6 +22,7 @@ export default class Typography extends Component {
       caption,
       medium,
       bold,
+      bold2,
       light,
       italic,
       button,
@@ -54,6 +55,7 @@ export default class Typography extends Component {
 
       size && { fontSize: size },
       bold && styles.bold,
+      bold2 && styles.bold2,
       light && styles.light,
       caption && styles.caption,
       height && { lineHeight: height },
@@ -79,6 +81,7 @@ const styles = StyleSheet.create({
     color: theme.colors.black,
   },
   bold: { fontWeight: 'bold' },
+  bold2: { fontWeight: '600'},
   light: { fontFamily: 'Rubik-Light' },
   center: { textAlign: 'center' },
   right: { textAlign: 'right' },

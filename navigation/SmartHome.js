@@ -7,6 +7,8 @@ import Overview from '../screens/Overview';
 import Loading from '../screens/Loading';
 import MyModal from '../screens/MyModal';
 import ModalPicker from '../screens/ModalPicker';
+import AddDevice from '../screens/AddDevice';
+import Location from '../screens/Location';
 
 export default createStackNavigator({
     Dashboard,
@@ -15,6 +17,8 @@ export default createStackNavigator({
     Loading,
     MyModal,
     ModalPicker,
+    AddDevice,
+    Location,
 }, {
     initialRouteName: 'Loading'
 })

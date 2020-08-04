@@ -1,5 +1,5 @@
 import React, { Component, } from 'react';
-import { View, StyleSheet, TouchableWithoutFeedback, ScrollView, SafeAreaView, Image, TouchableOpacity, Modal, Switch, Platform } from 'react-native';
+import { TextInput, View, StyleSheet, TouchableWithoutFeedback, ScrollView, SafeAreaView, Image, TouchableOpacity, Modal, Switch, Platform, TouchableHighlight } from 'react-native';
 import * as theme from '../theme'
 import  {Block, Block2, Card, Icon, Label, Card2, ModeCard, PreventionCard} from '../components'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -10,10 +10,11 @@ import BottomPopup from './BottomPopup';
 import LinearGradient from 'react-native-linear-gradient';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
-import ToggleSwitch from 'toggle-switch-react-native'
-
+import ToggleSwitch from 'toggle-switch-react-native';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import Toast, {DURATION} from 'react-native-easy-toast';
+import ModalSelector from 'react-native-modal-selector';
 
 const styles = StyleSheet.create({
     overview: {
@@ -71,7 +72,37 @@ class Overview extends Component{
         super()
         this.state = {
             isVisible: false,
+            powerStatus: false,
+            modalVisible: false,
+            textInputValue: '',
         }
+    }
+    
+    /* 전원 버튼 */
+    powerOff = () => {
+        this.setState({powerStatus: !this.state.powerStatus})
+    }
+
+    powerOn = () => {
+        this.setState({powerStatus: !this.state.powerStatus})
+        if(!this.state.powerStatus){
+            this.refs.toast.show('Power On!', DURATION.LENGTH_LONG);
+        }
+        else{
+            this.refs.toast.show('Power Off!', DURATION.LENGTH_LONG);
+        }
+    }
+
+    openMenu = () => {
+        this.setState({
+            setmenuVisible: true
+        })
+    }
+
+    closeMenu = () => {
+        this.setState({
+            setmenuVisible: false
+        })
     }
 
     handlePicker= () => {
@@ -102,6 +133,18 @@ class Overview extends Component{
         this.popupRef.close()
     }
 
+    showModal = () => {
+        this.setState({
+            modalVisible: true,
+        })
+    }
+
+    closeModal = () => {
+        this.setState({
+            modalVisible:false,
+        })
+    }
+
     state = {
         swtichValue: false,
         inOnEnergySwitch: false,
@@ -110,9 +153,11 @@ class Overview extends Component{
         isOnAlarmSwitch: false,
         isOnFrequent1: false,
         isOnFrequent2: false,
-
+        menuVisible: false,
+        setmenuVisible: false,
+       
     }
-    
+
     onToggle(isOn) {
         console.log("Changed to " + isOn);
       }
@@ -134,13 +179,7 @@ class Overview extends Component{
                 </TouchableWithoutFeedback>
             </Block>
         ),
-        headerRight: () => (
-            <Block>
-                <TouchableWithoutFeedback onPress={this.onShowPopup}>
-                    <MaterialCommunityIcons  name='dots-vertical' size={20} color={'#ff7f50'}/>
-                </TouchableWithoutFeedback>
-            </Block>
-        ),
+        headerRight: navigation.state.params && navigation.state.params.headerRight,
         headerLeftContainerStyle: {
             paddingLeft: theme.sizes.base
         },
@@ -153,12 +192,46 @@ class Overview extends Component{
         }
     });
 
-    
+    /*
+        header 부분 onPress 구현을 위한 navigation.params 사용
+    */
+
+    componentDidMount(){ 
+        this.props.navigation.setParams({
+               headerRight: ( 
+               <Block>
+                    <TouchableWithoutFeedback onPress={this.showModal}>
+                        <MaterialCommunityIcons  name='dots-vertical' size={20} color={'#ff7f50'}>
+                            
+                        </MaterialCommunityIcons>
+                    </TouchableWithoutFeedback>
+                </Block>
+                )
+        })
+   }
+
     render(){
         const translateY = new Animated.Value(0);
-
         return(
             <View style={{flex:1}}>
+                <Toast ref="toast" />
+                <TouchableWithoutFeedback onPress={() => {}}>
+                <Modal
+                    transparent={true}
+                    visible={this.state.modalVisible}
+                    animationType={'slide'}
+                >
+                    <View style={{backgroundColor: '#000000aa', flex:1}}>
+                        <View style={{backgroundColor: '#ffffff', margin: 50, padding:40, flex:1}}>
+                            <View style={{flexDirection:"row-reverse"}}>
+                                <MaterialCommunityIcons name="close" size={25} onPress={this.closeModal}/>
+                            </View>
+                            <Text>Modal Text</Text>
+                        </View>
+                    </View>
+                </Modal>
+                </TouchableWithoutFeedback>
+            
             <ScrollView style={{flex:1, backgroundColor: '#faf7f7'}} showsVerticalScrollIndicator={false}>
                 <Card2 col middle style={[{marginTop: 0, borderWidth: 0, shadow:{shadowColor:'#f79e7c', elevation:0}, backgroundColor: '#f7b297'}]}>
                    
@@ -168,7 +241,8 @@ class Overview extends Component{
                                     <Text paragraph color = "pinkorange" style={{marginTop: 3,}}>Frequently used</Text>
                                 </Block2>
                                 <Block2 style={{alignItems: 'flex-end', marginBottom: 20}}>
-                                    <MaterialCommunityIcons name="power" size={50} style={{backgroundColor: '#fff', borderRadius:30, color:'#ff7f50'}}/>
+                                    <MaterialCommunityIcons onPress={this.powerOn} name="power" size={50} color={this.state.powerStatus? '#ff7f50':'#cfc9c6'}style={{backgroundColor: '#fff', borderRadius:30}}/>
+                                    
                                 </Block2>
                             </Block2>
                             <Block2 row flex={2} style={{marginTop: 10, }}>
@@ -188,6 +262,7 @@ class Overview extends Component{
                                                 this.setState({isOnPreventionSwitch: false});
                                                 this.setState({isOnAlarmSwitch: false});
                                                 this.onToggle(isOnFrequent1);
+                                               
                                             }}
                                         />
                                 </Block2>
@@ -402,10 +477,11 @@ class Overview extends Component{
                         
                         */}
                          
-                        <BottomPopup title="Demo Popup" ref={(target) => this.popupRef = target} onTouchOutside={this.onClosePopup} data={popupList}></BottomPopup>
+                        
                 </SafeAreaView>
                
                 </ScrollView>
+                <BottomPopup title="Demo Popup" ref={(target) => this.popupRef = target} onTouchOutside={this.onClosePopup} data={popupList}></BottomPopup>
                 {/*<DateTimePicker
                             isVisible={this.state.isVisible}
                             onConfirm={this.handlePicker}

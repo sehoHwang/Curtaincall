@@ -7,12 +7,9 @@ import * as theme from '../theme'
 
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import TimePicker from 'react-native-24h-timepicker';
 import moment from 'moment';
 
-
-
-export default class PreventionCard extends Component {
+export default class DeviceCard extends Component {
     static defaultProps = {
 
         shadow: true,
@@ -23,29 +20,15 @@ export default class PreventionCard extends Component {
     constructor() {
       super()
       this.state = {
-        time: ''
+        isVisible: false,
+        chosenTime: ''
       }
-  }
-
-  state = {
-    selectedHours: 0,
-    selectedMinutes: 0,
-    selectedItem: 0,
-  }
-
-  onCancel() {
-      this.TimePicker.close();
-  }
-
-  onConfirm(hour, minute){
-    this.setState({ time: `${hour}:${minute}` });
-    this.TimePicker.close();
   }
 
   handlePicker= (time) => {
       this.setState({
           isVisible: false,
-          chosenHour: moment(time).format('HH')
+          chosenTime: moment(time).format('HH:mm')
       })
   }
 
@@ -63,26 +46,16 @@ export default class PreventionCard extends Component {
 
 
     renderHeader = () => {
-        const { selectedHours, selectedMinutes } = this.state;
+      const {isDatePickerVisible, setDatePickerVisibility} = this.state
       //const {date, mode, show} = this.state
         const { title, } = this.props;
         if(!title) return null;
         return(
             <Block2 row space="between" style={styles.header}>
                 <Text caption>{title}</Text>
-                <TouchableOpacity onPress={() => this.TimePicker.open()}>
+                <TouchableOpacity onPress={this.showPicker}>
                     <Icon option />
-                </TouchableOpacity>
-                <TimePicker
-                    ref={ref => {
-                        this.TimePicker = ref;
-                      }}
-                      onCancel={() => this.onCancel()}
-                      onConfirm={(hour, minute) => this.onConfirm(hour, minute)}
-                      maxHour={12}
-                      maxMinute={0}
-                />
-                
+        </TouchableOpacity>
                 
             </Block2>
         )
@@ -102,7 +75,7 @@ export default class PreventionCard extends Component {
     return (
       <Block2 style={cardStyles} {...props}>
         {this.renderHeader()}
-        <Text middle center h2 bold2 style={{marginBottom:15}}>{this.state.time}</Text>
+        <Text middle center h2 bold2 style={{marginBottom:15}}>{this.state.chosenTime}</Text>
         {children}
       </Block2>
     )
@@ -112,16 +85,18 @@ export default class PreventionCard extends Component {
 const styles = StyleSheet.create({
   card: {
     flex: 1,
-    padding: 25,
+    padding: 1,
     backgroundColor: theme.colors.white,
-    borderRadius:10,
+    borderRadius:1,
+   
+    
   },
   header: {
     paddingBottom: 10,
   },
   border: {
     borderColor: theme.colors.shadow,
-    borderWidth: 1,
+    borderBottomWidth: 1,
   },
   shadow: {
     shadowColor: theme.colors.shadow,

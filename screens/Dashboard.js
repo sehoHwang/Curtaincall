@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import {StyleSheet, View, ScrollView, TouchableOpacity, Image } from 'react-native'
+import {StyleSheet, View, ScrollView, TouchableOpacity, Image, Platform } from 'react-native'
 import { Block, Text } from '../components';
 import * as theme from '../theme';
 import mocks from '../setting';
 import GradientHeader from "react-native-gradient-header";
-import Hoverable from "../components/Hoverable";
+import GetLocation from 'react-native-get-location';
 
 //import { LineChart, Path } from 'react-native-svg-charts'
 
@@ -14,10 +14,15 @@ const createLogger = (...msg) => () => {
     console.log(...msg);
   };
 
+
+
 class Dashboard extends Component{
+
+
     static navigationOptions = {
         headerShown: false,
     }
+
     render(){
         const {navigation, setting} = this.props;
         const FirstIcon = setting['LUCETE1'].icon;
@@ -26,7 +31,7 @@ class Dashboard extends Component{
         const FourthIcon = setting['LUCETE4'].icon;
         const FifthIcon = setting['LUCETE5'].icon;
         const SixthIcon = setting['LUCETE6'].icon;
-        
+
         
         return(
             <Block style={styles.dashboard}>
@@ -38,7 +43,7 @@ class Dashboard extends Component{
                             start={{x:0, y:0}}
                             end={{x:0, y:1}}
                             imageSource={require('../assets/images/icons/add_device.png')}
-                            
+                            imageOnPress={() => navigation.navigate('AddDevice')}
                     />
                 </Block>
                 
@@ -84,14 +89,13 @@ class Dashboard extends Component{
                                     <Text button>{setting['LUCETE5'].name}</Text>
                                 </Block>
                             </TouchableOpacity>
-                            <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('Settings', {name: 'LUCETE6'})}>
+                            <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('Location', {name: 'LUCETE6'})}>
                                 <Block center middle style={styles.button}>
                                     <SixthIcon size={50}/>
                                     <Text button>{setting['LUCETE6'].name}</Text>
                                 </Block>
                             </TouchableOpacity>
                         </Block>
-
                         
                     </Block>
                     

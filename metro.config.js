@@ -5,7 +5,13 @@
  * @format
  */
 
+const {getDefaultConfig} = require('metro-config');
+const defaultConfig = getDefaultConfig.getDefaultValues(__dirname);
+
 module.exports = {
+  resolver: {
+    assetExts: [...defaultConfig.resolver.assetExts, 'pem'],
+  },
   transformer: {
     getTransformOptions: async () => ({
       transform: {

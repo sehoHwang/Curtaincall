@@ -75,7 +75,7 @@ export default class DeviceCard extends Component {
     return (
       <Block2 style={cardStyles} {...props}>
         {this.renderHeader()}
-        <Text middle center h2 bold2 style={{marginBottom:15}}>{this.state.chosenTime}</Text>
+        <Text middle center h2 bold2 >{this.state.chosenTime}</Text>
         {children}
       </Block2>
     )
@@ -88,6 +88,8 @@ const styles = StyleSheet.create({
     padding: 1,
     backgroundColor: theme.colors.white,
     borderRadius:1,
+    marginBottom: 10,
+    
    
     
   },

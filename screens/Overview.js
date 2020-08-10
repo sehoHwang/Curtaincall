@@ -16,6 +16,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Toast, {DURATION} from 'react-native-easy-toast';
 import ModalSelector from 'react-native-modal-selector';
 
+
 const styles = StyleSheet.create({
     overview: {
         flex: 1,
@@ -224,7 +225,7 @@ class Overview extends Component{
                     <View style={{backgroundColor: '#000000aa', flex:1}}>
                         <View style={{backgroundColor: '#ffffff', margin: 50, padding:40, flex:1}}>
                             <View style={{flexDirection:"row-reverse"}}>
-                                <MaterialCommunityIcons name="close" size={25} onPress={this.closeModal}/>
+                                <MaterialCommunityIcons name="close" color={'#ff7f50'} size={25} onPress={this.closeModal}/>
                             </View>
                             <Text>Modal Text</Text>
                         </View>

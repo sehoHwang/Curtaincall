@@ -45,7 +45,6 @@ export default class ModeCard extends Component {
       styles.card,
       shadow && styles.shadow,
       border && styles.border,
-      
       style,
     ];
 

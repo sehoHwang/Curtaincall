@@ -43,7 +43,7 @@ class Dashboard extends Component{
                             start={{x:0, y:0}}
                             end={{x:0, y:1}}
                             imageSource={require('../assets/images/icons/add_device.png')}
-                            imageOnPress={() => navigation.navigate('AddDevice')}
+                            imageOnPress={() => navigation.navigate('Manual')}
                     />
                 </Block>
                 
@@ -83,7 +83,7 @@ class Dashboard extends Component{
                     
                     
                         <Block row space="around">
-                            <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('Settings', {name: 'LUCETE5'})}>
+                            <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('RctSockets', {name: 'LUCETE5'})}>
                                 <Block center middle style={styles.button}>
                                     <FifthIcon size={50}/>
                                     <Text button>{setting['LUCETE5'].name}</Text>

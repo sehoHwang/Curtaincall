@@ -5,6 +5,7 @@ import * as theme from '../theme';
 import mocks from '../setting';
 import GradientHeader from "react-native-gradient-header";
 import GetLocation from 'react-native-get-location';
+import AsyncStorage from '@react-native-community/async-storage';
 
 //import { LineChart, Path } from 'react-native-svg-charts'
 
@@ -18,7 +19,33 @@ const createLogger = (...msg) => () => {
 
 class Dashboard extends Component{
 
+    constructor(){
+        super();
 
+        this.state ={
+            'lucete1': {
+                name: 'hi',
+            },
+            'lucete2': {
+                name: '',
+            },
+            'lucete3': {
+                name: '',
+            },
+            'lucete4': {
+                name: '',
+            },
+            'lucete5': {
+                name: '',
+            },
+            'lucete6' : {
+                name: '',
+            },
+        }
+
+    }
+
+    
     static navigationOptions = {
         headerShown: false,
     }
@@ -50,6 +77,7 @@ class Dashboard extends Component{
 
                 <ScrollView contentContainerStyle={styles.buttons} showsVerticalScrollIndicator={false} style={{paddingHorizontal: theme.sizes.base*2}} >
                     <Block column  space="around">
+                       
                         <Block row space="around">
                             <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('Overview', {name: 'LUCETE1'})}>
                                 <Block center middle style={styles.button}>
@@ -65,7 +93,7 @@ class Dashboard extends Component{
                             </TouchableOpacity>
                         </Block>
                     
-                    
+                        {/*
                         <Block row space="around">
                             <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('Settings', {name: 'LUCETE3'})}>
                                 <Block center middle style={styles.button}>
@@ -76,7 +104,7 @@ class Dashboard extends Component{
                             <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('Settings', {name: 'LUCETE4'})}>
                                 <Block center middle style={styles.button}>
                                     <FourthIcon size={50}/>
-                                    <Text button>{setting['LUCETE4'].name}</Text>
+                                    <Text button>{this.state['lucete3'].name}</Text>
                                 </Block>
                             </TouchableOpacity>
                         </Block>
@@ -95,7 +123,7 @@ class Dashboard extends Component{
                                     <Text button>{setting['LUCETE6'].name}</Text>
                                 </Block>
                             </TouchableOpacity>
-                        </Block>
+                        </Block>*/}
                         
                     </Block>
                     

@@ -1,7 +1,7 @@
 import React, { Component, } from 'react';
-import { TextInput, View, StyleSheet, TouchableWithoutFeedback, ScrollView, SafeAreaView, Image, TouchableOpacity, Modal, Switch, Platform, TouchableHighlight } from 'react-native';
+import { TextInput, View, StyleSheet, TouchableWithoutFeedback, ScrollView, SafeAreaView, Image, TouchableOpacity, Modal, Switch, Platform, TouchableHighlight} from 'react-native';
 import * as theme from '../theme'
-import  {Block, Block2, Card, Icon, Label, Card2, ModeCard, PreventionCard} from '../components'
+import  {Block, Block2, Card, Icon, Label, Card2, ModeCard, PreventionCard, WifiCard} from '../components'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {Text} from '../components'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -15,7 +15,9 @@ import DateTimePicker from 'react-native-modal-datetime-picker';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Toast, {DURATION} from 'react-native-easy-toast';
 import ModalSelector from 'react-native-modal-selector';
-
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-community/async-storage';
+import Toast2 from 'react-native-simple-toast';
 
 const styles = StyleSheet.create({
     overview: {
@@ -48,6 +50,11 @@ const styles = StyleSheet.create({
         borderRadius: 24,
 
     },
+    settingList: {
+        marginBottom: 10,
+        height:60,
+        justifyContent:'center',
+    }
     
 })
 
@@ -68,15 +75,50 @@ const popupList = [
 
 
 class Overview extends Component{
-
+    
     constructor() {
         super()
         this.state = {
             isVisible: false,
             powerStatus: false,
-            modalVisible: false,
+            modalVisible: false, // setting 모달 visible
+            curtainSettingVisible: false,
+
             textInputValue: '',
+
+            frequent1: '',
+            frequent2: '',
+
+            frequentModalVisible: false,
+            modeFirstListVisible: false,
+            modeSecondListVisible: false,
+
+            firstFrequent: false,
+            secondFrequent:false,
+
+            
         }
+        /* 커튼 컨트롤 변수 */
+
+        this.upTimer = null;
+        this.downTimer = null;
+
+        this.curtainUp = this.curtainUp.bind(this);
+        this.stopcurtainUp = this.stopcurtainUp.bind(this);
+
+        this.curtainDown = this. curtainDown.bind(this);
+        this.stopcurtainDown = this.stopcurtainDown.bind(this);
+
+        /* 커튼 재설정 변수 */
+
+        this.settingUpTimer = null;
+        this.settingDownTimer = null;
+        this.settingCurtainUp = this.settingCurtainUp.bind(this);
+        this.settingStopCurtainUp = this.settingStopCurtainUp.bind(this);
+        
+        this.settingCurtainDown = this.settingCurtainDown.bind(this);
+        this.settingStopCurtainDown = this.settingStopCurtainDown.bind(this);
+
     }
     
     /* 전원 버튼 */
@@ -126,7 +168,7 @@ class Overview extends Component{
 
     popupRef = React.createRef();
 
-    onShowPopup = () => {
+    onShowPopup = () => {   
         this.popupRef.show()
     }
     
@@ -146,6 +188,119 @@ class Overview extends Component{
         })
     }
 
+    showFrequentModal = () => {
+        this.setState({
+            frequentModalVisible: true,
+        })
+    }
+
+    closeFrequentModal = () => {
+        this.setState({
+            frequentModalVisible: false,
+        })
+    }
+
+    showFirstModeListModal = () => {
+        this.setState({
+            modeFirstListVisible: true,
+        })
+    }
+
+    showSecondModeListModal = () => {
+        this.setState({
+            modeSecondListVisible: true,
+        })
+    }
+
+    closeFirstModeListModal = () => {
+        this.setState({
+            modeFirstListVisible: false,
+        })
+    }
+
+    closeSecondModeListModal = () => {
+        this.setState({
+            modeSecondListVisible: false,
+        })
+    }
+
+    showCurtainSettingModal = () => {
+        this.setState({
+            curtainSettingVisible: true,
+        })
+    }
+
+    closeCurtainSettingModal = () =>{
+        this.setState({
+            curtainSettingVisible: false,
+        })
+    }
+
+    /* 데이터 저장 */
+
+    saveFrequent1Enery= async()=>{
+        await AsyncStorage.setItem('frequent1', '에너지 효율 모드');
+        alert('첫번째 우선순위가 저장되었습니다.');
+    }
+    saveFrequent1Landscape= async()=>{
+        await AsyncStorage.setItem('frequent1', '조경 모드');
+        alert('첫번째 우선순위가 저장되었습니다.');
+    }
+    saveFrequent1Prevention= async()=>{
+        await AsyncStorage.setItem('frequent1', '방범 모드');
+        alert('첫번째 우선순위가 저장되었습니다.');
+    }
+    saveFrequent1Alarm= async()=>{
+        await AsyncStorage.setItem('frequent1', '알람 모드');
+        alert('첫번째 우선순위가 저장되었습니다.');
+    }
+
+    saveFrequent2Enery= async()=>{
+        await AsyncStorage.setItem('frequent2', '에너지 효율 모드');
+        alert('두번째 우선순위가 저장되었습니다.');
+    }
+    saveFrequent2Landscape= async()=>{
+        await AsyncStorage.setItem('frequent2', '조경 모드');
+        alert('두번째 우선순위가 저장되었습니다.');
+    }
+    saveFrequent2Prevention= async()=>{
+        await AsyncStorage.setItem('frequent2', '방범 모드');
+        alert('두번째 우선순위가 저장되었습니다.');
+    }
+    saveFrequent2Alarm= async()=>{
+        await AsyncStorage.setItem('frequent2', '알람 모드');
+        alert('두번째 우선순위가 저장되었습니다.');
+    }
+
+    /* 데이터 불러오기 */
+
+    loadFrequent1Data = async() => {
+        AsyncStorage.getItem('frequent1').then((value)=>{this.setState({frequent1:value})})
+    }
+
+    loadFrequent2Data = async() => {
+        AsyncStorage.getItem('frequent2').then((value)=>{this.setState({frequent2:value})})
+    }
+
+    /* 첫번째 우선순위 모드 최종 변경 */
+
+    addFirstFrequentFinal = () => {
+        
+        this.loadFrequent1Data();
+        this.closeModal();
+        this.closeFrequentModal();
+        this.closeFirstModeListModal();
+    }
+
+    addSecondFrequentFinal = () => {
+        
+        this.loadFrequent2Data();
+        this.closeModal();
+        this.closeFrequentModal();
+        this.closeSecondModeListModal();
+    }
+
+
     state = {
         swtichValue: false,
         inOnEnergySwitch: false,
@@ -156,7 +311,60 @@ class Overview extends Component{
         isOnFrequent2: false,
         menuVisible: false,
         setmenuVisible: false,
+        
        
+    }
+
+    selectFrequentMode1 = () =>{
+        
+        this.showFirstModeListModal()
+        
+    }
+
+    selectFrequentMode2 = () =>{
+        
+        this.showSecondModeListModal()
+    }
+
+    addFirstFrequentMode1 = () => {
+        
+        this.saveFrequent1Enery();
+        this.addFirstFrequentFinal();
+    }
+
+    addFirstFrequentMode2 = () => {
+        this.saveFrequent1Landscape();
+        this.addFirstFrequentFinal()
+    }
+
+    addFirstFrequentMode3 = () => {
+        this.saveFrequent1Prevention()
+        this.addFirstFrequentFinal()
+    }
+
+    addFirstFrequentMode4 = () => {
+        this.saveFrequent1Alarm()
+        this.addFirstFrequentFinal()
+    }
+
+    addSecondFrequentMode1 = () => {
+        this.saveFrequent2Enery()
+        this.addSecondFrequentFinal()
+    }
+
+    addSecondFrequentMode2 = () => {
+        this.saveFrequent2Landscape()
+        this.addSecondFrequentFinal()
+    }
+
+    addSecondFrequentMode3 = () => {
+        this.saveFrequent2Prevention()
+        this.addSecondFrequentFinal()
+    }
+
+    addSecondFrequentMode4 = () => {
+        this.saveFrequent2Alarm()
+        this.addSecondFrequentFinal()
     }
 
     onToggle(isOn) {
@@ -165,6 +373,45 @@ class Overview extends Component{
 
     toggleSwitch = (value) => {
         this.setState({swtichValue: value})
+    }
+
+    /* 커튼 재설정 */
+    settingCurtainUp = () => {
+        this.settingUpTimer = setTimeout(this.settingCurtainUp, 200);
+        Toast2.show('(재설정)커튼이 올라갑니다.');
+    }
+
+    settingStopCurtainUp = () => {
+        clearTimeout(this.settingUpTimer);
+    }
+
+    settingCurtainDown = () => {
+        this.settingDownTimer = setTimeout(this.settingCurtainDown, 200);
+        Toast2.show('(재설정)커튼이 내려갑니다.');
+    }
+
+    settingStopCurtainDown = () => {
+        clearTimeout(this.settingDownTimer);
+    }
+
+    /* 커튼 컨트롤 */
+
+    curtainUp = () => {
+        this.upTimer = setTimeout(this.curtainUp, 200);
+        Toast2.show('커튼이 올라갑니다.');
+    }
+
+    stopcurtainUp = () => {
+        clearTimeout(this.upTimer);
+    }
+
+    curtainDown = () => {
+        this.downTimer = setTimeout(this.curtainDown, 200);
+        Toast2.show('커튼이 내려갑니다.');
+    }
+
+    stopcurtainDown = () => {
+        clearTimeout(this.downTimer);
     }
 
     static navigationOptions = ({navigation}) => ({
@@ -208,11 +455,14 @@ class Overview extends Component{
                     </TouchableWithoutFeedback>
                 </Block>
                 )
-        })
+        });
+        this.loadFrequent1Data();
+        this.loadFrequent2Data();
    }
 
     render(){
         const translateY = new Animated.Value(0);
+        
         return(
             <View style={{flex:1}}>
                 <Toast ref="toast" />
@@ -223,16 +473,165 @@ class Overview extends Component{
                     animationType={'slide'}
                 >
                     <View style={{backgroundColor: '#000000aa', flex:1}}>
-                        <View style={{backgroundColor: '#ffffff', margin: 50, padding:40, flex:1}}>
-                            <View style={{flexDirection:"row-reverse"}}>
+                        <View style={{backgroundColor: '#ffffff', marginHorizontal: 50, marginVertical: 200 ,padding:20, flex:1}}>
+                            <View style={{flexDirection:"row-reverse", marginBottom: 20}}>
                                 <MaterialCommunityIcons name="close" color={'#ff7f50'} size={25} onPress={this.closeModal}/>
                             </View>
-                            <Text>Modal Text</Text>
+                            <Block middle flex={1}>
+                            <TouchableOpacity style={styles.settingList} onPress={this.showCurtainSettingModal}>
+                                    <WifiCard style={{backgroundColor: '#f7c7b5'}}>                            
+                                        <Text center bold style={{color:'#fff'}}>커튼 재설정</Text>
+                                    </WifiCard>
+                            </TouchableOpacity>
+                                <TouchableOpacity style={styles.settingList} onPress={this.showFrequentModal}>
+                                    <WifiCard>
+                                        <Text center bold>우선모드 등록하기</Text>
+                                    </WifiCard>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.settingList}>
+                                    <WifiCard>                            
+                                        <Text center bold>와이파이 재설정</Text>
+                                    </WifiCard>
+                                </TouchableOpacity>
+                                
+                            </Block>
                         </View>
                     </View>
                 </Modal>
                 </TouchableWithoutFeedback>
-            
+
+                <Modal
+                    transparent={true}
+                    visible={this.state.frequentModalVisible}
+                    animationType={'slide'}
+                >
+                    <View style={{backgroundColor: '#000000aa', flex:1}}>
+                        <View style={{backgroundColor: '#ffffff', marginHorizontal: 80, marginVertical:200, padding:20, flex:1}}>
+                            <View style={{flexDirection:"row-reverse", marginBottom: 20}}>
+                                <MaterialCommunityIcons name="close" color={'#ff7f50'} size={25} onPress={this.closeFrequentModal}/>
+                            </View>
+                            <Block middle flex={1}>
+                                <TouchableOpacity style={styles.settingList} onPress={this.selectFrequentMode1}>
+                                    
+                                    <WifiCard style={{marginHorizontal:40}}>
+                                        <Text bold center>우선순위 모드1</Text>
+                                    </WifiCard>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.settingList} onPress={this.selectFrequentMode2}>
+                                    <WifiCard style={{marginHorizontal:40}}>
+                                        <Text bold center>우선순위 모드2</Text>
+                                    </WifiCard>
+                                </TouchableOpacity>
+                            </Block>
+                        </View>
+                    </View>
+                </Modal>
+
+                <Modal
+                    transparent={true}
+                    visible={this.state.modeFirstListVisible}
+                    animationType={'slide'}
+                >
+                    <View style={{backgroundColor: '#000000aa', flex:1}}>
+                        <View style={{backgroundColor: '#ffffff', marginHorizontal: 60, marginVertical:160, padding:20, flex:1}}>
+                            <View style={{flexDirection:"row-reverse", marginBottom: 20}}>
+                                <MaterialCommunityIcons name="close" color={'#ff7f50'} size={25} onPress={this.closeFirstModeListModal}/>
+                            </View>
+                            <Block middle flex={1}>
+                                <TouchableOpacity style={styles.settingList} onPress={this.addFirstFrequentMode1}>
+                                    <WifiCard style={{marginHorizontal:40}}>
+                                        <Text bold center>에너지 효율 모드</Text>
+                                    </WifiCard>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.settingList} onPress={this.addFirstFrequentMode2}>
+                                    <WifiCard style={{marginHorizontal:40}}>
+                                        <Text bold center>조경 모드</Text>
+                                    </WifiCard>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.settingList} onPress={this.addFirstFrequentMode3}>
+                                    <WifiCard style={{marginHorizontal:40}}>
+                                        <Text bold center>방범 모드</Text>
+                                    </WifiCard>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.settingList} onPress={this.addFirstFrequentMode4}>
+                                    <WifiCard style={{marginHorizontal:40}}>
+                                        <Text bold center>알람 모드</Text>
+                                    </WifiCard>
+                                </TouchableOpacity>
+                            </Block>
+                        </View>
+                    </View>
+                </Modal>
+
+                <Modal
+                    transparent={true}
+                    visible={this.state.modeSecondListVisible}
+                    animationType={'slide'}
+                >
+                    <View style={{backgroundColor: '#000000aa', flex:1}}>
+                        <View style={{backgroundColor: '#ffffff', marginHorizontal: 60, marginVertical:160, padding:20, flex:1}}>
+                            <View style={{flexDirection:"row-reverse", marginBottom: 20}}>
+                                <MaterialCommunityIcons name="close" color={'#ff7f50'} size={25} onPress={this.closeSecondModeListModal}/>
+                            </View>
+                            <Block middle flex={1}>
+                                <TouchableOpacity style={styles.settingList} onPress={this.addSecondFrequentMode1}>
+                                    <WifiCard style={{marginHorizontal:40}}>
+                                        <Text bold center>에너지 효율 모드</Text>
+                                    </WifiCard>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.settingList} onPress={this.addSecondFrequentMode2}>
+                                    <WifiCard style={{marginHorizontal:40}}>
+                                        <Text bold center>조경 모드</Text>
+                                    </WifiCard>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.settingList} onPress={this.addSecondFrequentMode3}>
+                                    <WifiCard style={{marginHorizontal:40}}>
+                                        <Text bold center>방범 모드</Text>
+                                    </WifiCard>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.settingList} onPress={this.addSecondFrequentMode4}>
+                                    <WifiCard style={{marginHorizontal:40}}>
+                                        <Text bold center>알람 모드</Text>
+                                    </WifiCard>
+                                </TouchableOpacity>
+                            </Block>
+                        </View>
+                    </View>
+                </Modal>
+
+                <Modal
+                    transparent={true}
+                    visible={this.state.curtainSettingVisible}
+                    animationType={'slide'}
+                >
+                    <View style={{backgroundColor: '#000000aa', flex:1}}>
+                        <View style={{backgroundColor: '#ffffff', marginHorizontal: 60, marginVertical:160, padding:20, flex:1}}>
+                            <View style={{flexDirection:"row-reverse", marginBottom: 20}}>
+                                <MaterialCommunityIcons name="close" color={'#ff7f50'} size={25} onPress={this.closeCurtainSettingModal}/>
+                            </View>
+                            <View style={{flex:1, flexDirection:'column-reverse', alignItems:'center'}}>
+                                
+                                <TouchableOpacity style={{flex:0.15, flexDirection:'column-reverse', marginBottom: 10, width:100, height:20}}
+                                    onPress={this.closeCurtainSettingModal}
+                                >
+                                        <WifiCard style={{backgroundColor: '#f7c7b5', borderRadius: 20}}>                            
+                                            <Text center bold style={{color:'#fff', size:30}}>완료</Text>
+                                        </WifiCard>
+                                </TouchableOpacity>
+                                
+                                <TouchableOpacity style={{flex:0.4}} onPressIn={this.settingCurtainDown} onPressOut={this.settingStopCurtainDown}>
+                                    <Ionicons name="chevron-down-circle-sharp" size={90} color={'#f7a88b'}/>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity style={{flex:0.4}} onPressIn={this.settingCurtainUp} onPressOut={this.settingStopCurtainUp}>
+                                    <Ionicons name="chevron-up-circle-sharp" size={90} color={'#f7a88b'}/>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    
+                    </View>
+                </Modal>
+
             <ScrollView style={{flex:1, backgroundColor: '#faf7f7'}} showsVerticalScrollIndicator={false}>
                 <Card2 col middle style={[{marginTop: 0, borderWidth: 0, shadow:{shadowColor:'#f79e7c', elevation:0}, backgroundColor: '#f7b297'}]}>
                    
@@ -241,14 +640,29 @@ class Overview extends Component{
                                     <Text h3 bold style={{color: '#fff'}}>우선순위 모드</Text>
                                     <Text paragraph color = "pinkorange" style={{marginTop: 3,}}>Frequently used</Text>
                                 </Block2>
+                                
                                 <Block2 style={{alignItems: 'flex-end', marginBottom: 20}}>
                                     <MaterialCommunityIcons onPress={this.powerOn} name="power" size={50} color={this.state.powerStatus? '#ff7f50':'#cfc9c6'}style={{backgroundColor: '#fff', borderRadius:30}}/>
                                     
                                 </Block2>
+                                
+                            </Block2>
+                            <Block2 center>
+                                
+                                <Block2 flex={1} center middle style={{padding: 25, backgroundColor: '#f7b9a1', marginRight: 10, width:250, height:200, borderRadius: 10}}>
+                                    <Text bold color = "pinkorange" style={{marginTop: 2,marginBottom:3}}>Curtain Controller</Text>
+                                    <TouchableOpacity onPressIn={this.curtainUp} onPressOut={this.stopcurtainUp}>
+                                        <Ionicons name="chevron-up-circle-outline" size={60} color={'#f7e7e1'} style={{marginBottom:30}}/>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPressIn={this.curtainDown} onPressOut={this.stopcurtainDown}>
+                                        <Ionicons name="chevron-down-circle-outline" size={60} color={'#f7e7e1'}/>
+                                    </TouchableOpacity>
+                                </Block2>
                             </Block2>
                             <Block2 row flex={2} style={{marginTop: 10, }}>
                                 <Block2 flex={1} center middle style={{padding: 25, backgroundColor: '#f7b9a1', marginRight: 10, height:70, borderRadius: 10}}>
-                                    <Text light style={{marginBottom:10, color: '#fff'}}>우선순위 1</Text>
+                                   
+                                    <Text light style={{marginBottom:10, color: '#fff'}}>{this.state.frequent1}</Text>
                                         <ToggleSwitch
                                             isOn={false}
                                             onColor='#faa889'
@@ -268,7 +682,7 @@ class Overview extends Component{
                                         />
                                 </Block2>
                                 <Block2 flex={1} center middle style={{padding: 25, backgroundColor: '#f7b9a1', marginRight: 10, height:70, borderRadius: 10}}>
-                                    <Text light style={{marginBottom:10, color: '#fff'}}>우선순위 2</Text>
+                                        <Text light style={{marginBottom:10, color: '#fff'}}>{this.state.frequent2}</Text>
                                         <ToggleSwitch
                                             isOn={false}
                                             onColor='#faa889'

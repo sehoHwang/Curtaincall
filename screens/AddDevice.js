@@ -9,12 +9,26 @@ import io from 'socket.io-client';
 import TcpSocket from 'react-native-tcp-socket';
 import base64 from 'react-native-base64';
 
+import WifiList from '../components/WifiList';
+
 export default class AddDevice extends Component{
 
-   
-    state= {
-        connectIP: '',
+    id=0;
+    constructor(props){
+        super(props);
+
+        this.state= {
+            wifi: [
+                {
+                    id:0,
+                    wifiname:'WAP123',
+                },
+                
+                
+            ],
+        }
     }
+    
 
     static navigationOptions = ({navigation}) => ({
         title: <Text h4 style={{color:'black'}}>LUCETE 등록</Text>,
@@ -38,6 +52,12 @@ export default class AddDevice extends Component{
     })
 
     
+    handleCreate = (data) => {
+        const { wifi } = this.state;
+        this.setState({
+            wifi: wifi.concat({ id: this.id++, ...data })
+        })
+    }
 
     render(){
         
@@ -48,7 +68,7 @@ export default class AddDevice extends Component{
             interface: 'wifi',
             localAddress: '192.168.4.101',
         }, () => {
-            client.write('Rodemn Namu huendle huendle!');
+            client.write('APPSETTING WIFI START');
         });
     
         client.on('data', function(data) {
@@ -60,6 +80,8 @@ export default class AddDevice extends Component{
                 //console.log('message is', String.fromCharCode(data[i]));
             }
             console.log('message is', strData);
+            {this.handleCreate(strData)}
+            
             //console.log('message is', data['data']);
             
         });
@@ -121,21 +143,17 @@ export default class AddDevice extends Component{
         });*/
 
           
-
+        
+        
         return(
             <Block style={{marginHorizontal : 20}}>
                 <Text caption style={{paddingTop: 40, marginBottom:5,}}>wifi List</Text>
                 <ScrollView style={{paddingBottom:20}} showsVerticalScrollIndicator={false}>
-            <Block><DeviceCard><Text>{this.state.connectIP}</Text></DeviceCard></Block>
-                    <Block><DeviceCard><Text>1</Text></DeviceCard></Block>
-                    <Block><DeviceCard><Text>1</Text></DeviceCard></Block>
-                    <Block><DeviceCard><Text>1</Text></DeviceCard></Block>
-                    <Block><DeviceCard><Text>1</Text></DeviceCard></Block>
-                    <Block><DeviceCard><Text>1</Text></DeviceCard></Block>
-                    <Block><DeviceCard><Text>1</Text></DeviceCard></Block>
-                    <Block><DeviceCard><Text>1</Text></DeviceCard></Block>
-                    <Block><DeviceCard><Text>1</Text></DeviceCard></Block>
-                    <Block><DeviceCard><Text>1</Text></DeviceCard></Block>
+                    <Block>
+                        <WifiList data={this.state.wifi} />
+                        
+                    </Block>
+                         
                 </ScrollView>
             </Block>
         )

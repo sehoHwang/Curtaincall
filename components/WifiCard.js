@@ -9,7 +9,7 @@ import DateTimePicker from 'react-native-modal-datetime-picker';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 
-export default class DeviceCard extends Component {
+export default class WifiCard extends Component {
     static defaultProps = {
 
         shadow: true,
@@ -45,21 +45,6 @@ export default class DeviceCard extends Component {
   }
 
 
-    renderHeader = () => {
-      const {isDatePickerVisible, setDatePickerVisibility} = this.state
-      //const {date, mode, show} = this.state
-        const { title, } = this.props;
-        if(!title) return null;
-        return(
-            <Block2 row space="between" style={styles.header}>
-                <Text caption>{title}</Text>
-                <TouchableOpacity onPress={this.showPicker}>
-                    <Icon option />
-        </TouchableOpacity>
-                
-            </Block2>
-        )
-    }
 
   render() {
     const {isDatePickerVisible} = this.state;
@@ -74,8 +59,6 @@ export default class DeviceCard extends Component {
 
     return (
       <Block2 style={cardStyles} {...props}>
-        {this.renderHeader()}
-        <Text middle center h2 bold2 >{this.state.chosenTime}</Text>
         {children}
       </Block2>
     )
@@ -89,8 +72,9 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.white,
     borderRadius:1,
     marginBottom: 10,
+    height:60,
+    justifyContent: 'center',
     
-   
     
   },
   header: {

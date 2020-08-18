@@ -8,7 +8,7 @@ import Card2 from './Card2';
 import ModeCard from './ModeCard';
 import PreventionCard from './PreventionCard';
 import DeviceCard from './DeviceCard';
-
+import WifiCard from './WifiCard';
 //import PanSlider from './PanSlider';
 
 export {
@@ -22,5 +22,6 @@ export {
   ModeCard,
   PreventionCard,
   DeviceCard,
+  WifiCard,
   //PanSlider,
 }

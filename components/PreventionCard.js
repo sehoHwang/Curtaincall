@@ -80,7 +80,9 @@ export default class PreventionCard extends Component {
                       onCancel={() => this.onCancel()}
                       onConfirm={(hour, minute) => this.onConfirm(hour, minute)}
                       maxHour={12}
-                      maxMinute={0}
+                      maxMinute={30}
+                      minMinute={0}
+                      minuteInterval={30}
                 />
                 
                 

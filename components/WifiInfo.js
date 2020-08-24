@@ -5,10 +5,15 @@ export default class WifiInfo extends Component {
   static defaultProps = {
     wifi: {
       wifiname: '이름',
-      id: 0
+      id: 0,
     }
   }
   
+  handleRemove = () => {
+    const {wifi, onRemove} = this.props;
+    onRemove(info.id)
+  }
+
   render() {
     const style = {
       border: '1px solid black',

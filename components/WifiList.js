@@ -4,13 +4,14 @@ import  {Block, Block2, Card, Icon, Label, Card2, ModeCard, PreventionCard, Text
 
 export default class WifiList extends Component {
   static defaultProps = {
-    data: []
+    data: [],
+    onRemove: () => console.warn('onRemove not defined'),
   }
 
   render() {
-    const { data } = this.props;
+    const { data, onRemove } = this.props;
     const list = data.map(
-      wifi => (<WifiInfo key={wifi.id} wifi={wifi}/>)
+      wifi => (<WifiInfo key={wifi.id} wifi={wifi} onRemove={onRemove}/>)
     );
 
     return (

@@ -1,5 +1,5 @@
 import React, { Component, } from 'react';
-import { TextInput, View, StyleSheet, TouchableWithoutFeedback, ScrollView, SafeAreaView, Image, TouchableOpacity, Modal, Switch, Platform, TouchableHighlight} from 'react-native';
+import { TextInput, View, StyleSheet, TouchableWithoutFeedback, ScrollView, SafeAreaView, Image, TouchableOpacity, Modal, Switch, Platform, TouchableHighlight, Alert} from 'react-native';
 import * as theme from '../theme'
 import  {Block, Block2, Card, Icon, Label, Card2, ModeCard, PreventionCard, WifiCard} from '../components'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -19,6 +19,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-community/async-storage';
 import Toast2 from 'react-native-simple-toast';
 
+let currentDevice;
+let currentDeviceNumber;
+let Info;
+let deviceTitle;
 const styles = StyleSheet.create({
     overview: {
         flex: 1,
@@ -96,6 +100,8 @@ class Overview extends Component{
             firstFrequent: false,
             secondFrequent:false,
 
+            deviceTitle: '',
+            
             
         }
         /* 커튼 컨트롤 변수 */
@@ -239,47 +245,75 @@ class Overview extends Component{
     /* 데이터 저장 */
 
     saveFrequent1Enery= async()=>{
-        await AsyncStorage.setItem('frequent1', '에너지 효율 모드');
+        Info.device[currentDeviceNumber].firstMode = '에너지 효율 모드';
+        await AsyncStorage.setItem('@lucete:devices', JSON.stringify(Info));
+        Info = JSON.parse(await AsyncStorage.getItem('@lucete:devices'));
+        currentDevice = Info.device[currentDeviceNumber];
         alert('첫번째 우선순위가 저장되었습니다.');
     }
     saveFrequent1Landscape= async()=>{
-        await AsyncStorage.setItem('frequent1', '조경 모드');
+        Info.device[currentDeviceNumber].firstMode = '조경 모드';
+        await AsyncStorage.setItem('@lucete:devices', JSON.stringify(Info));
+        Info = JSON.parse(await AsyncStorage.getItem('@lucete:devices'));
+        currentDevice = Info.device[currentDeviceNumber];
         alert('첫번째 우선순위가 저장되었습니다.');
     }
     saveFrequent1Prevention= async()=>{
-        await AsyncStorage.setItem('frequent1', '방범 모드');
+        Info.device[currentDeviceNumber].firstMode = '방범 모드';
+        await AsyncStorage.setItem('@lucete:devices', JSON.stringify(Info));
+        Info = JSON.parse(await AsyncStorage.getItem('@lucete:devices'));
+        currentDevice = Info.device[currentDeviceNumber];
         alert('첫번째 우선순위가 저장되었습니다.');
     }
     saveFrequent1Alarm= async()=>{
-        await AsyncStorage.setItem('frequent1', '알람 모드');
+        Info.device[currentDeviceNumber].firstMode = '알람 모드';
+        await AsyncStorage.setItem('@lucete:devices', JSON.stringify(Info));
+        Info = JSON.parse(await AsyncStorage.getItem('@lucete:devices'));
+        currentDevice = Info.device[currentDeviceNumber];
         alert('첫번째 우선순위가 저장되었습니다.');
     }
 
     saveFrequent2Enery= async()=>{
-        await AsyncStorage.setItem('frequent2', '에너지 효율 모드');
+        Info.device[currentDeviceNumber].secondMode = '에너지 효율 모드';
+        await AsyncStorage.setItem('@lucete:devices', JSON.stringify(Info));
+        Info = JSON.parse(await AsyncStorage.getItem('@lucete:devices'));
+        currentDevice = Info.device[currentDeviceNumber];
         alert('두번째 우선순위가 저장되었습니다.');
     }
     saveFrequent2Landscape= async()=>{
-        await AsyncStorage.setItem('frequent2', '조경 모드');
+        Info.device[currentDeviceNumber].secondMode = '조경 모드';
+        await AsyncStorage.setItem('@lucete:devices', JSON.stringify(Info));
+        Info = JSON.parse(await AsyncStorage.getItem('@lucete:devices'));
+        currentDevice = Info.device[currentDeviceNumber];
         alert('두번째 우선순위가 저장되었습니다.');
     }
     saveFrequent2Prevention= async()=>{
-        await AsyncStorage.setItem('frequent2', '방범 모드');
+        Info.device[currentDeviceNumber].secondMode = '방범 모드';
+        await AsyncStorage.setItem('@lucete:devices', JSON.stringify(Info));
+        Info = JSON.parse(await AsyncStorage.getItem('@lucete:devices'));
+        currentDevice = Info.device[currentDeviceNumber];
         alert('두번째 우선순위가 저장되었습니다.');
     }
     saveFrequent2Alarm= async()=>{
-        await AsyncStorage.setItem('frequent2', '알람 모드');
+        Info.device[currentDeviceNumber].secondMode = '알람 모드';
+        await AsyncStorage.setItem('@lucete:devices', JSON.stringify(Info));
+        Info = JSON.parse(await AsyncStorage.getItem('@lucete:devices'));
+        currentDevice = Info.device[currentDeviceNumber];
         alert('두번째 우선순위가 저장되었습니다.');
     }
 
     /* 데이터 불러오기 */
 
     loadFrequent1Data = async() => {
-        AsyncStorage.getItem('frequent1').then((value)=>{this.setState({frequent1:value})})
+        this.setState({
+            frequent1: currentDevice.firstMode,
+        })
     }
 
     loadFrequent2Data = async() => {
-        AsyncStorage.getItem('frequent2').then((value)=>{this.setState({frequent2:value})})
+        this.setState({
+            frequent2: currentDevice.secondMode,
+        })
     }
 
     /* 첫번째 우선순위 모드 최종 변경 */
@@ -414,6 +448,24 @@ class Overview extends Component{
         clearTimeout(this.downTimer);
     }
 
+    /* 기기 삭제 후 홈 화면으로 돌아가기 */
+    deleteDevice = async({navigation}) => {
+        {Alert.alert(
+            "기기 삭제",
+            "정말로 기기를 삭제하시겠습니까?",
+            [
+                {
+                    text:'삭제',
+                    onPress: () => this.props.navigation.navigate('Dashboard'),
+                }
+            ]
+        )}
+        Info.device.splice(currentDeviceNumber, 1);
+        await AsyncStorage.setItem('@lucete:devices', JSON.stringify(Info));
+        console.log(await AsyncStorage.getItem('@lucete:devices'));
+        navigation.navigate('Dashboard');
+    }
+
     static navigationOptions = ({navigation}) => ({
         title: <Text h4 style={{color:'black'}}>LUCETE</Text>,
         headerTitleStyle: {
@@ -444,7 +496,30 @@ class Overview extends Component{
         header 부분 onPress 구현을 위한 navigation.params 사용
     */
 
-    componentDidMount(){ 
+    async componentDidMount(){ 
+        console.log('didmount진입')
+        const {navigation} = this.props;
+        const deviceID = navigation.getParam('id');
+        const DB = await AsyncStorage.getItem('@lucete:devices');
+        Info = JSON.parse(DB);
+        var i = 0;
+        
+        for(let singleDevice of Info.device){
+            console.log('for문 실행')
+            if(singleDevice.deviceID === deviceID){
+                console.log('현재 기기 ID는' + singleDevice.deviceID)
+                currentDevice = singleDevice;
+                currentDeviceNumber = i;
+                break;
+                
+            }
+            i++;
+        }
+        this.setState({
+            frequent1: currentDevice.firstMode,
+            frequent2: currentDevice.secondMode,
+        })
+        
         this.props.navigation.setParams({
                headerRight: ( 
                <Block>
@@ -458,11 +533,21 @@ class Overview extends Component{
         });
         this.loadFrequent1Data();
         this.loadFrequent2Data();
+
+        deviceTitle = currentDevice.deviceName;
+   }
+
+   resettingWifi = () => {
+       const {navigation} = this.props
+            this.setState({
+            modalVisible: false,
+        })
+        //navigation.navigate('Manual');
    }
 
     render(){
         const translateY = new Animated.Value(0);
-        
+        const {navigation} = this.props;
         return(
             <View style={{flex:1}}>
                 <Toast ref="toast" />
@@ -478,19 +563,26 @@ class Overview extends Component{
                                 <MaterialCommunityIcons name="close" color={'#ff7f50'} size={25} onPress={this.closeModal}/>
                             </View>
                             <Block middle flex={1}>
-                            <TouchableOpacity style={styles.settingList} onPress={this.showCurtainSettingModal}>
-                                    <WifiCard style={{backgroundColor: '#f7c7b5'}}>                            
-                                        <Text center bold style={{color:'#fff'}}>커튼 재설정</Text>
-                                    </WifiCard>
-                            </TouchableOpacity>
+                                <TouchableOpacity style={styles.settingList} onPress={this.showCurtainSettingModal}>
+                                        <WifiCard style={{backgroundColor: '#f7c7b5'}}>                            
+                                            <Text center bold style={{color:'#fff'}}>커튼 재설정</Text>
+                                        </WifiCard>
+                                </TouchableOpacity>
                                 <TouchableOpacity style={styles.settingList} onPress={this.showFrequentModal}>
                                     <WifiCard>
                                         <Text center bold>우선모드 등록하기</Text>
                                     </WifiCard>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.settingList}>
+
+                                <TouchableOpacity style={styles.settingList} onPress={this.resettingWifi}>
                                     <WifiCard>                            
                                         <Text center bold>와이파이 재설정</Text>
+                                    </WifiCard>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity style={styles.settingList} onPress={this.deleteDevice}>
+                                    <WifiCard>                            
+                                        <Text center bold>기기 삭제하기</Text>
                                     </WifiCard>
                                 </TouchableOpacity>
                                 
@@ -709,7 +801,8 @@ class Overview extends Component{
 
                         <Block2 row style={[{marginTop: 18,}]}>
                             <Card title="알람 모드 시간"
-                            middle style={[{marginRight: 7}]}>
+                            middle style={[{marginRight: 7}]}
+                            deviceID = {navigation.getParam('id')}>
                                 {/*<Icon vehicle />*/}
                                 {/*<TouchableWithoutFeedback onPress={this.showPicker}>
                                     <MaterialCommunityIcons  name='dots-vertical' size={20} color={'#ff7f50'}/>
@@ -718,7 +811,8 @@ class Overview extends Component{
                                 <Text paragraph color="gray">Set the Alarm</Text>
                             </Card>
                             <PreventionCard title="방범 모드 간격"
-                            middle style={[{marginLeft: 7}]}>
+                            middle style={[{marginLeft: 7}]}
+                            deviceID = {navigation.getParam('id')}>
                                 {/*<Icon distance />*/}
                                 {/*<Text h2 bold style={{marginTop: 15}}>1hour</Text>*/}
                                 <Text paragraph color="gray">Set the Gap</Text>

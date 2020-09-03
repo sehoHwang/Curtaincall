@@ -10,6 +10,8 @@ target 'Curtaincall' do
 
   pod 'RNDateTimePicker', :path => '../node_modules/@react-native-community/datetimepicker'
 
+  pod 'react-native-sqlite-storage', :path => '../node_modules/react-native-sqlite-storage'
+
   target 'CurtaincallTests' do
     inherit! :complete
     # Pods for testing

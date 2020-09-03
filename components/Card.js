@@ -4,14 +4,18 @@ import Block2 from './Block2'
 import Text from './Text'
 import Icon from './Icon'
 import * as theme from '../theme'
-
+import AsyncStorage from '@react-native-community/async-storage';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 
+let currentDevice;
+let currentDeviceNumber;
+let Info;
+let deviceID;
+
 export default class Card extends Component {
     static defaultProps = {
-
         shadow: true,
         border: true,
         title: null,
@@ -19,17 +23,45 @@ export default class Card extends Component {
 
     constructor() {
       super()
+      
       this.state = {
         isVisible: false,
         chosenTime: ''
       }
   }
 
-  handlePicker= (time) => {
-      this.setState({
+  componentDidMount = async() =>{
+    const DB = await AsyncStorage.getItem('@lucete:devices');
+        Info = JSON.parse(DB);
+        var i = 0;
+        
+        for(let singleDevice of Info.device){
+            console.log('for문 실행')
+            if(singleDevice.deviceID === deviceID){
+                console.log('현재 기기 ID는' + singleDevice.deviceID)
+                currentDevice = singleDevice;
+                currentDeviceNumber = i;
+                break;
+                
+            }
+            i++;
+        }
+    this.setState({
+      chosenTime: currentDevice.alarm,
+    })
+  }
+
+  handlePicker= async(time) => {
+        this.setState({
           isVisible: false,
           chosenTime: moment(time).format('HH:mm')
       })
+
+      Info.device[currentDeviceNumber].alarm = this.state.chosenTime;
+      await AsyncStorage.setItem('@lucete:devices', JSON.stringify(Info));
+      Info = JSON.parse(await AsyncStorage.getItem('@lucete:devices'));
+      currentDevice = Info.device[currentDeviceNumber];
+      console.log('알람 시간이 ' + this.state.chosenTime+'으로 설정되었습니다.')
   }
 
   hidePicker = () => {
@@ -69,6 +101,7 @@ export default class Card extends Component {
     }
 
   render() {
+    deviceID = this.props.deviceID;
     const {isDatePickerVisible} = this.state;
     const { shadow, border, style, children, ...props } = this.props;
     const cardStyles = [

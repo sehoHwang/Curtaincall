@@ -7,6 +7,7 @@ import GradientHeader from "react-native-gradient-header";
 import GetLocation from 'react-native-get-location';
 import AsyncStorage from '@react-native-community/async-storage';
 
+
 //import { LineChart, Path } from 'react-native-svg-charts'
 
 import Overview from './Overview'
@@ -23,29 +24,100 @@ class Dashboard extends Component{
         super();
 
         this.state ={
-            'lucete1': {
-                name: 'hi',
-            },
-            'lucete2': {
-                name: '',
-            },
-            'lucete3': {
-                name: '',
-            },
-            'lucete4': {
-                name: '',
-            },
-            'lucete5': {
-                name: '',
-            },
-            'lucete6' : {
-                name: '',
-            },
+          
+            firstdeviceID:'',
+            firstdeviceName:'',
+            firstshow:false,
+        
+            seconddeviceID:'',
+            seconddeviceName:'',
+            secondshow:false,
+        
+            thirddeviceID:'',
+            thirddeviceName:'',
+            thirdshow:false,
+        
+            fourthdeviceID:'',
+            fourthdeviceName:'',
+            fourthshow:false,
+        
+        
+            fifthdeviceID:'',
+            fifthdeviceName:'',
+            fifthshow:false,
+        
+        
+            sixthdeviceID:'',
+            sixthdeviceName:'',
+            sixthshow:false,
+        
+
         }
 
     }
 
-    
+    async componentDidMount(){
+        //const {firstDevice, secondDevice, thirdDevice, fourthDevice, fifthDevice, sixthDevice} = this.state;
+        
+        var i =0;
+        const DB = await AsyncStorage.getItem('@lucete:devices');
+       
+        if(JSON.parse(DB).device!=null){
+            for(let singleDevice of JSON.parse(DB).device){
+                
+                if(i===0){
+                    console.log(singleDevice.deviceName)
+                    this.setState({
+                        firstdeviceID: singleDevice.deviceID,
+                        firstdeviceName: singleDevice.deviceName,
+                        firstshow: true,
+                    })
+                }
+                else if(i===1){
+                    console.log(singleDevice.deviceName)
+                    
+                    this.setState({
+                        seconddeviceID: singleDevice.deviceID,
+                        seconddeviceName: singleDevice.deviceName,
+                        secondshow: true,
+                    })
+                    console.log('보여지냐?' + this.state.secondShow)
+                }
+                else if(i===2){
+                    console.log('하하')
+                    this.setState({
+                        thirddeviceID: singleDevice.deviceID,
+                        thirddeviceName: singleDevice.deviceName,
+                        thirdshow: true,
+                    })
+                }
+                else if(i===3){
+                    this.setState({
+                        fourthdeviceID: singleDevice.deviceID,
+                        fourthdeviceName: singleDevice.deviceName,
+                        fourthshow: true,
+                    })
+                }
+                else if(i===4){
+                    this.setState({
+                        fifthdeviceID: singleDevice.deviceID,
+                        fifthdeviceName: singleDevice.deviceName,
+                        fifthshow: true,
+                    })
+                }
+                else if(i===5){
+                    this.setState({
+                        sixthdeviceID: singleDevice.deviceID,
+                        sixthdeviceName: singleDevice.deviceName,
+                        sixthshow: true,
+                    })
+                }
+
+                i++;
+            }
+        }
+
+    }
     static navigationOptions = {
         headerShown: false,
     }
@@ -54,13 +126,8 @@ class Dashboard extends Component{
         const {navigation, setting} = this.props;
         const FirstIcon = setting['LUCETE1'].icon;
         const SecondIcon = setting['LUCETE2'].icon;
-        const ThirdIcon = setting['LUCETE3'].icon;
-        const FourthIcon = setting['LUCETE4'].icon;
-        const FifthIcon = setting['LUCETE5'].icon;
-        const SixthIcon = setting['LUCETE6'].icon;
-
-        
         return(
+            
             <Block style={styles.dashboard}>
                 <Block flex={0.5}>
                     <GradientHeader
@@ -77,20 +144,66 @@ class Dashboard extends Component{
 
                 <ScrollView contentContainerStyle={styles.buttons} showsVerticalScrollIndicator={false} style={{paddingHorizontal: theme.sizes.base*2}} >
                     <Block column  space="around">
-                       
+                        
                         <Block row space="around">
-                            <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('Overview', {name: 'LUCETE1'})}>
+                        {this.state.firstshow ? (
+                            <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('Overview', {id: this.state.firstdeviceID})}>
                                 <Block center middle style={styles.button}>
+                                    
                                     <FirstIcon size={50} />
-                                    <Text button>{setting['LUCETE1'].name}</Text>
+                                    <Text button>{this.state.firstdeviceName}</Text>
                                 </Block>
                             </TouchableOpacity>
-                            <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('Settings', {name: 'LUCETE2'})}>
+                        ) : null}
+
+                        {this.state.secondshow ? (
+                            <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('Overview', {id: this.state.seconddeviceID})}>
                                 <Block center middle style={styles.button}>
                                     <SecondIcon size={50}/>
-                                    <Text button>{setting['LUCETE2'].name}</Text>
+                                    <Text button>{this.state.seconddeviceName}</Text>
                                 </Block>
                             </TouchableOpacity>
+                        ) : null}
+                        </Block>
+                        
+                        <Block row space="around">
+                        {this.state.thirdshow ? (
+                            <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('Overview', {id: this.state.thirddeviceID})}>
+                                <Block center middle style={styles.button}>
+                                    <FirstIcon size={50} />
+                                    <Text button>{this.state.thirddeviceName}</Text>
+                                </Block>
+                            </TouchableOpacity>
+                        ) : null}
+
+                        {this.state.fourthshow ? (
+                            <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('Overview', {id: this.state.fourthdeviceID})}>
+                                <Block center middle style={styles.button}>
+                                    <SecondIcon size={50}/>
+                                    <Text button>{this.state.fourthdeviceName}</Text>
+                                </Block>
+                            </TouchableOpacity>
+                        ) : null}    
+                        </Block>
+
+                        <Block row space="around">
+                        {this.state.fifthshow ? (
+                            <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('Overview', {id: this.state.fifthdeviceID})}>
+                                <Block center middle style={styles.button}>
+                                    <FirstIcon size={50} />
+                                    <Text button>{this.state.fifthdeviceName}</Text>
+                                </Block>
+                            </TouchableOpacity>
+                        ) : null}
+
+                        {this.state.sixthshow ? (
+                            <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('Overview', {id: this.state.sixthdeviceID})}>
+                                <Block center middle style={styles.button}>
+                                    <SecondIcon size={50}/>
+                                    <Text button>{this.state.sixthdeviceName}</Text>
+                                </Block>
+                            </TouchableOpacity>
+                        ) : null}
                         </Block>
                     
                         {/*

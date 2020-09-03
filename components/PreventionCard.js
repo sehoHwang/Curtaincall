@@ -4,13 +4,16 @@ import Block2 from './Block2'
 import Text from './Text'
 import Icon from './Icon'
 import * as theme from '../theme'
-
+import AsyncStorage from '@react-native-community/async-storage';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import TimePicker from 'react-native-24h-timepicker';
 import moment from 'moment';
 
-
+let currentDevice;
+let currentDeviceNumber;
+let Info;
+let deviceID;
 
 export default class PreventionCard extends Component {
     static defaultProps = {
@@ -33,21 +36,41 @@ export default class PreventionCard extends Component {
     selectedItem: 0,
   }
 
+  componentDidMount = async() =>{
+    const DB = await AsyncStorage.getItem('@lucete:devices');
+        Info = JSON.parse(DB);
+        var i = 0;
+        
+        for(let singleDevice of Info.device){
+            console.log('for문 실행')
+            if(singleDevice.deviceID === deviceID){
+                console.log('현재 기기 ID는' + singleDevice.deviceID)
+                currentDevice = singleDevice;
+                currentDeviceNumber = i;
+                break;
+                
+            }
+            i++;
+        }
+    this.setState({
+      time: currentDevice.autoGap,
+    })
+  }
+
   onCancel() {
       this.TimePicker.close();
   }
 
-  onConfirm(hour, minute){
+  onConfirm= async(hour, minute) => {
     this.setState({ time: `${hour}:${minute}` });
+    Info.device[currentDeviceNumber].autoGap = this.state.time;
+    await AsyncStorage.setItem('@lucete:devices', JSON.stringify(Info));
+    Info = JSON.parse(await AsyncStorage.getItem('@lucete:devices'));
+    currentDevice = Info.device[currentDeviceNumber];
+    console.log('db 시간 간격은' + currentDevice.autoGap+'입니당.'+'알람 시간이 ' + this.state.time+'으로 설정되었습니다.')
     this.TimePicker.close();
   }
 
-  handlePicker= (time) => {
-      this.setState({
-          isVisible: false,
-          chosenHour: moment(time).format('HH')
-      })
-  }
 
   hidePicker = () => {
       this.setState({
@@ -91,6 +114,7 @@ export default class PreventionCard extends Component {
     }
 
   render() {
+    deviceID = this.props.deviceID;
     const {isDatePickerVisible} = this.state;
     const { shadow, border, style, children, ...props } = this.props;
     const cardStyles = [

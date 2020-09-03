@@ -35,11 +35,13 @@ class LoadingScene extends Component {
         tension: 10,
         friction: 2,
         duration: 1000,
+        
       }).start(),
 
       Animated.timing(LogoText, {
         toValue: 1,
         duration: 1200,
+        useNativeDriver: true,
       }),
     ]).start(() => {
       this.setState({

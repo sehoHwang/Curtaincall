@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import {Image, StyleSheet, Button, TouchableWithoutFeedback, ScrollView, SafeAreaView, TouchableOpacity, Animated} from 'react-native';
+import {Image, StyleSheet, Button, TouchableWithoutFeedback, ScrollView, SafeAreaView, TouchableOpacity, Animated, Alert,} from 'react-native';
 import {Block, Text} from '../components';
 import * as theme from '../theme';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-
+import AsyncStorage from '@react-native-community/async-storage';
 import {background} from '../components/images';
 
 const backgrounds = [
@@ -36,10 +36,25 @@ export default class Manual extends Component{
         slideIndex : 0
     }
 
-    componentDidMount() {
+    componentDidMount= async(navigation) => {
+        //AsyncStorage.clear();
         this.scrollX.addListener(({value}) => {
             this.setState({slideIndex: Math.floor(value / theme.sizes.width)})
         })
+        const DB = await AsyncStorage.getItem('@lucete:devices');
+        if(JSON.parse(DB).device.length >= 6){
+            Alert.alert(
+                "기기등록 초과",
+                "최대 등록 가능 기기 개수가 초과하였습니다.",
+                [
+                    {
+                        text:'이전 화면으로',
+                        onPress: () => this.props.navigation.navigate('Dashboard'),
+                    }
+                ]
+            )
+        }
+        
     }
 
     static navigationOptions = ({navigation}) => ({

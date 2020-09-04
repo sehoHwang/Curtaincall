@@ -11,7 +11,7 @@ import AddDevice from '../screens/AddDevice';
 import Location from '../screens/Location';
 import WifiConnection from '../screens/WifiConnection';
 import Manual from '../screens/Manual';
-
+import WifiManual from '../screens/WifiManual';
 export default createStackNavigator({
     Dashboard,
     Settings,
@@ -23,6 +23,7 @@ export default createStackNavigator({
     Location,
     WifiConnection,
     Manual,
+    WifiManual,
 }, {
     initialRouteName: 'Loading'
 })

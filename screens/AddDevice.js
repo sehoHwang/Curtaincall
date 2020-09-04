@@ -357,6 +357,7 @@ export default class AddDevice extends Component{
             modalVisible: false,
             topsettingVisible: true,
         });*/
+        Toast2.show('와이파이 비밀번호 확인 후 커튼설정 창으로 이동됩니다.')
         global.client.write('APPSETTING SSID '+'\"'+this.state.ssid+'\"\nAPPSETTING PW '+'\"'+this.state.wifiPassword+'\"\nAPPSETTING LOCATION '+this.state.currentLatitude+' '+this.state.currentLongitude+' \nAPPSETTING TOPSETTINGSTART \n');
         //global.client.write('APPSETTING PW '+'\"'+this.state.wifiPassword+'\"\n');
         //global.client.write('APPSETTING LOCATION '+this.state.currentLatitude+' '+this.state.currentLongitude+' \n');

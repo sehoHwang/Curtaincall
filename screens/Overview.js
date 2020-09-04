@@ -18,6 +18,7 @@ import ModalSelector from 'react-native-modal-selector';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-community/async-storage';
 import Toast2 from 'react-native-simple-toast';
+import TcpSocket from 'react-native-tcp-socket';
 
 let currentDevice;
 let currentDeviceNumber;
@@ -58,7 +59,19 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         height:60,
         justifyContent:'center',
-    }
+    },
+    ButtonStyle: {
+ 
+        marginTop:10,
+        paddingTop:15,
+        paddingBottom:15,
+        marginLeft:30,
+        marginRight:30,
+        backgroundColor:'#ff7f50',
+        borderRadius:30,
+        borderWidth: 1,
+        borderColor: '#fff'
+      },
     
 })
 
@@ -82,12 +95,15 @@ class Overview extends Component{
     
     constructor() {
         super()
+
+        
+
         this.state = {
             isVisible: false,
             powerStatus: false,
             modalVisible: false, // setting 모달 visible
             curtainSettingVisible: false,
-
+            bottomSettingVisible: false,
             textInputValue: '',
 
             frequent1: '',
@@ -101,7 +117,19 @@ class Overview extends Component{
             secondFrequent:false,
 
             deviceTitle: '',
-            
+
+            wifiManualVisible: false,
+            wifiListVisible: false,
+
+            passwordVisible: false,
+
+            value: '',
+            list: [],
+            ssid: '',
+            wifiPassword:'',
+
+            currentLongitude: '',
+            currentLatitude: '',
             
         }
         /* 커튼 컨트롤 변수 */
@@ -140,6 +168,37 @@ class Overview extends Component{
         else{
             this.refs.toast.show('Power Off!', DURATION.LENGTH_LONG);
         }
+    }
+
+    callLocation(that){
+        //alert("callLocation Called");
+            Geolocation.getCurrentPosition(
+            // 현재 위치 받아옴
+            (position) => {
+                const currentLongitude = JSON.stringify(position.coords.longitude);
+                
+                const currentLatitude = JSON.stringify(position.coords.latitude);
+                
+                that.setState({ currentLongitude:currentLongitude });
+                
+                that.setState({ currentLatitude:currentLatitude });
+                
+            },
+            (error) => alert(error.message),
+            { enableHighAccuracy: true, timeout: 100000, maximumAge: 1000 }
+        );
+        that.watchID = Geolocation.watchPosition((position) => {
+            
+            console.log(position);
+            const currentLongitude = JSON.stringify(position.coords.longitude);
+            
+            const currentLatitude = JSON.stringify(position.coords.latitude);
+            
+            that.setState({ currentLongitude:currentLongitude });
+            
+            that.setState({ currentLatitude:currentLatitude });
+            
+        });
     }
 
     openMenu = () => {
@@ -234,11 +293,45 @@ class Overview extends Component{
         this.setState({
             curtainSettingVisible: true,
         })
+        global.client=TcpSocket.createConnection({
+            port: 80,
+            host: '192.168.4.100',
+            tls: false,
+            interface: 'wifi',
+            //localAddress: '192.168.4.101',
+        }, () => {
+            global.client.write('APPSETTING CONNECTED \nAPPSETTING TOPSETTINGSTART \n');
+            //global.client.write('APPSETTING INITIALIZINGSTART \n');
+        });
     }
 
     closeCurtainSettingModal = () =>{
+        global.client.write('APPSETTING BOTTOMSETTINGSTART \n');
         this.setState({
             curtainSettingVisible: false,
+            bottomSettingVisible: true,
+        })
+        
+    }
+
+    completeCurtainSetting = () => {
+        this.setState({
+            bottomSettingVisible: false,
+            modalVisible: false,
+        })
+        global.client.write('APPSETTING CURTAINSETTINGENDED \nAPPSETTING CLOSED \n');
+        global.client.end();
+    }
+
+    closeUpSettingModal = () => {
+        this.setState({
+            curtainSettingVisible: false,
+        })
+    }
+
+    closeBottomSettingModal = () => {
+        this.setState({
+            bottomSettingVisible: false,
         })
     }
 
@@ -411,8 +504,9 @@ class Overview extends Component{
 
     /* 커튼 재설정 */
     settingCurtainUp = () => {
-        this.settingUpTimer = setTimeout(this.settingCurtainUp, 200);
+        this.settingUpTimer = setTimeout(this.settingCurtainUp, 500);
         Toast2.show('(재설정)커튼이 올라갑니다.');
+        global.client.write('APPSETTING UP \n')
     }
 
     settingStopCurtainUp = () => {
@@ -420,11 +514,13 @@ class Overview extends Component{
     }
 
     settingCurtainDown = () => {
-        this.settingDownTimer = setTimeout(this.settingCurtainDown, 200);
+        this.settingDownTimer = setTimeout(this.settingCurtainDown, 500);
         Toast2.show('(재설정)커튼이 내려갑니다.');
+        global.client.write('APPSETTING DOWN \n')
     }
 
     settingStopCurtainDown = () => {
+        
         clearTimeout(this.settingDownTimer);
     }
 
@@ -535,15 +631,161 @@ class Overview extends Component{
         this.loadFrequent2Data();
 
         deviceTitle = currentDevice.deviceName;
+
+        
    }
 
    resettingWifi = () => {
-       const {navigation} = this.props
-            this.setState({
-            modalVisible: false,
-        })
-        //navigation.navigate('Manual');
+       this.setState({
+           modalVisible:false, // 시발 이거 변수 바꿔라 개새끼야!
+           wifiManualVisible: true,
+       })
+       if(Platform.OS === 'ios'){
+        this.callLocation(that);
+        }else{
+            async function requestCameraPermission() {
+                try {
+                    const granted = await PermissionsAndroid.request(
+                        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,{
+                            'title': 'Location Access Required',
+                            'message': 'This App needs to Access your location'
+                        }
+                    )
+                    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                        // 승인 시 이를 알림
+                        that.callLocation(that);
+                    } else {
+                        alert("Permission Denied");
+                    }
+                } catch (err) {
+                    alert("err",err);
+                    console.warn(err)
+                }
+            }
+            requestCameraPermission();
+        }
    }
+
+   /* 와이파이 재설정 매뉴얼 모달창 종료 */
+   closeWifiManualModal = () => {
+       this.setState({
+           wifiManualVisible: false,
+       })
+   }
+
+   closeWifiListModal = () => {
+       this.setState({
+           wifiListVisible: false,
+       })
+   }
+
+   onChagneValue = (data) =>{
+        this.setState({
+            value: data
+        })
+    }
+
+   startWifiSetting = () => {
+        global.client=TcpSocket.createConnection({
+            port: 80,
+            host: '192.168.4.100',
+            tls: false,
+            interface: 'wifi',
+            //localAddress: '192.168.4.101',
+        }, () => {
+            global.client.write('APPSETTING CONNECTED \nAPPSETTING WIFILIST \n');
+            //global.client.write('APPSETTING INITIALIZINGSTART \n');
+        });
+        
+       this.setState({
+           wifiManualVisible: false,
+           wifiListVisible: true,
+       })
+       global.client.on('data', async(data) => {
+        //console.log('message was received', data);
+        
+        var strData="";
+        var tokenData="";
+        let dataLen = data.length;
+        for(var i=0; i<dataLen; i++){
+            strData+=String.fromCharCode(data[i]);
+            //console.log('message is', String.fromCharCode(data[i]));
+        }
+        console.log('message is', strData);
+        this.onChagneValue(strData);
+        tokenData = this.state.value.split(' ');
+        
+
+        if(tokenData[1] == 'WIFISUCCESSED'){
+            alert('와이파이 재설정이 완료되었습니다.')
+            this.setState({
+                wifiListVisible: false,
+            });
+            global.client.write('APPSETTING CLOSED \n');
+            global.client.end();
+        }
+
+        else if(tokenData[1] == 'WIFIFAILED'){
+            alert('일치하지 않는 비밀번호 입니다.')
+            /*this.setState({
+                modalVisible:true,
+            })*/
+        }
+
+        else{
+            this.onAddItem();
+        }
+    });
+
+       //alert('와이파이 목록을 불러옵니다...');
+   }
+
+   onAddItem = () => {
+        
+    this.setState(state => {
+        //const value_decode = iconv.decode(state.value, 'EUC-KR').toString();
+        const list = state.list.concat(state.value);
+
+        return {
+            list,
+            value: '',
+        }
+    })
+    }
+
+    openInputPassword = (item) => {
+        this.setState({
+            modalVisible: true,
+            ssid: item,
+        })
+    }
+
+    /* 와이파이 비밀번호 입력 모달창 */
+    openInputPassword = (item) => {
+        
+        this.setState({
+            passwordVisible: true,
+            ssid: item,
+        })
+        
+    }
+
+    handlePassword = (text) => {
+        this.setState({
+            wifiPassword: text
+        })
+    }
+
+    /* 와이파이 전송 함수 */
+    sendPassword = () => {
+        this.setState({
+            passwordVisible: false,
+            
+        });
+        //Toast2.show('와이파이 비밀번호 확인 후 커튼설정 창으로 이동됩니다.')
+        global.client.write('APPSETTING SSID '+'\"'+this.state.ssid+'\"\nAPPSETTING PW '+'\"'+this.state.wifiPassword+'\"\nAPPSETTING LOCATION '+this.state.currentLatitude+' '+this.state.currentLongitude+' \nAPPSETTING TOPSETTINGSTART \n');
+       
+    }
 
     render(){
         const translateY = new Animated.Value(0);
@@ -697,9 +939,9 @@ class Overview extends Component{
                     animationType={'slide'}
                 >
                     <View style={{backgroundColor: '#000000aa', flex:1}}>
-                        <View style={{backgroundColor: '#ffffff', marginHorizontal: 60, marginVertical:160, padding:20, flex:1}}>
+                        <View style={{backgroundColor: '#ffffff', marginHorizontal: 60, marginVertical:100, padding:20, flex:1}}>
                             <View style={{flexDirection:"row-reverse", marginBottom: 20}}>
-                                <MaterialCommunityIcons name="close" color={'#ff7f50'} size={25} onPress={this.closeCurtainSettingModal}/>
+                                <MaterialCommunityIcons name="close" color={'#ff7f50'} size={25} onPress={this.closeUpSettingModal}/>
                             </View>
                             <View style={{flex:1, flexDirection:'column-reverse', alignItems:'center'}}>
                                 
@@ -718,9 +960,158 @@ class Overview extends Component{
                                 <TouchableOpacity style={{flex:0.4}} onPressIn={this.settingCurtainUp} onPressOut={this.settingStopCurtainUp}>
                                     <Ionicons name="chevron-up-circle-sharp" size={90} color={'#f7a88b'}/>
                                 </TouchableOpacity>
+                                <Text>커튼을 최상단으로 이동시켜 주세요!</Text>
                             </View>
                         </View>
                     
+                    </View>
+                </Modal>
+
+                <Modal
+                    transparent={true}
+                    visible={this.state.bottomSettingVisible}
+                    animationType={'slide'}
+                >
+                    <View style={{backgroundColor: '#000000aa', flex:1}}>
+                        <View style={{backgroundColor: '#ffffff', marginHorizontal: 60, marginVertical:100, padding:20, flex:1}}>
+                            <View style={{flexDirection:"row-reverse", marginBottom: 20}}>
+                                <MaterialCommunityIcons name="close" color={'#ff7f50'} size={25} onPress={this.closeBottomSettingModal}/>
+                            </View>
+                            <View style={{flex:1, flexDirection:'column-reverse', alignItems:'center'}}>
+                                
+                                <TouchableOpacity style={{flex:0.15, flexDirection:'column-reverse', marginBottom: 10, width:100, height:20}}
+                                    onPress={this.completeCurtainSetting}
+                                >
+                                        <WifiCard style={{backgroundColor: '#f7c7b5', borderRadius: 20}}>                            
+                                            <Text center bold style={{color:'#fff', size:30}}>완료</Text>
+                                        </WifiCard>
+                                </TouchableOpacity>
+                                
+                                <TouchableOpacity style={{flex:0.4}} onPressIn={this.settingCurtainDown} onPressOut={this.settingStopCurtainDown}>
+                                    <Ionicons name="chevron-down-circle-sharp" size={90} color={'#f7a88b'}/>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity style={{flex:0.4}} onPressIn={this.settingCurtainUp} onPressOut={this.settingStopCurtainUp}>
+                                    <Ionicons name="chevron-up-circle-sharp" size={90} color={'#f7a88b'}/>
+                                </TouchableOpacity>
+                                <Text>커튼을 최하단으로 이동시켜 주세요!</Text>
+                            </View>
+                        </View>
+                    
+                    </View>
+                </Modal>
+
+                <Modal
+                    transparent={true}
+                    visible={this.state.wifiManualVisible}
+                    animationType={'slide'}
+                >
+                    <View style={{backgroundColor: '#000000aa', flex:1}}>
+                        <View style={{backgroundColor: '#ffffff', marginHorizontal: 20, marginVertical:200, padding:20, flex:1}}>
+                            <View style={{ marginBottom: 20, flexDirection: 'row-reverse'}}>
+                                <MaterialCommunityIcons name="close" color={'#ff7f50'} size={25} onPress={this.closeWifiManualModal}/>
+                            </View>
+                            <View style={{flex:1, alignItems:'center'}}>
+                                <Block style={{flex:1, backgroundColor:'#fff'}}>
+                                    
+                                    <Block center style={{flex:1, marginBottom:60}}>
+                                        
+                                        
+                                        <Text center caption style={{marginTop: 10, marginBottom: 5, marginHorizontal: 30}}>
+                                            와이파이 재설정을 위해서 LUCETE 기기 연결이 필요합니다.
+                                        </Text>
+                                        <Text center caption style={{marginTop: 10, marginBottom:20, marginHorizontal: 30}}>
+                                            설정 창에서 연결을 완료한 후 진행해주세요!
+                                        </Text>
+                                        <Text h4 bold style={{marginBottom: 40,}}>커튼콜 디바이스 연결 필요</Text>
+                                        <TouchableOpacity style={styles.ButtonStyle} activeOpacity={0.5} onPress={this.startWifiSetting}>
+                                            <Text bold style={{color:'#fff', marginHorizontal:20,}}>GET STARTED!</Text>
+                                        </TouchableOpacity>
+                                    
+                                    </Block>
+                                    
+                                </Block>
+                                
+                            </View>
+                        </View>
+                    
+                    </View>
+                </Modal>
+
+                <Modal
+                    transparent={true}
+                    visible={this.state.wifiListVisible}
+                    animationType={'slide'}
+                >
+                    <View style={{backgroundColor: '#000000aa', flex:1}}>
+                        <View style={{backgroundColor: '#ffffff', marginHorizontal: 20, marginVertical:100, padding:20, flex:1}}>
+                            <View style={{ marginBottom: 20, flexDirection: 'row-reverse'}}>
+                                <MaterialCommunityIcons name="close" color={'#ff7f50'} size={25} onPress={this.closeWifiListModal}/>
+                            </View>
+                            <View style={{flex:1, alignItems:'center'}}>
+                                <Block style={{flex:1, backgroundColor:'#fff'}}>
+                                    
+                                    <Block center style={{flex:1, marginBottom:60}}>
+                                        <Text caption style={{paddingTop: 40, marginBottom:5,}}>wifi List</Text>
+                
+                                        <ScrollView style={{paddingBottom:20}} showsVerticalScrollIndicator={false}>
+                                            <Block>
+                                                
+                                                    {this.state.list.map(item=>(
+                                                        <WifiCard>
+                                                            <TouchableOpacity key={item} onPress={(e) => this.openInputPassword(item)}>
+                                                                <Text key={item} style={{marginLeft: 10, fontSize: 20, fontWeight: '600'}}>
+                                                                    {item}
+                                                                </Text> 
+                                                            </TouchableOpacity>
+                                                        </WifiCard>
+                                                    ))}
+                                                
+                                            </Block>
+                                                
+                                        </ScrollView>
+                                        
+                                        
+                                    
+                                    </Block>
+                                    
+                                </Block>
+                                
+                            </View>
+                        </View>
+                    
+                    </View>
+                </Modal>
+
+                <Modal
+                    transparent={true}
+                    visible={this.state.passwordVisible}
+                    animationType={'slide'}
+                >
+                    <View style={{backgroundColor: '#000000aa', flex:1}}>
+                        <View style={{backgroundColor: '#ffffff', marginHorizontal: 50, marginVertical: 200 ,padding:20, flex:1}}>
+                            
+                            <Block middle center flex={1}>
+                                <Text bold style={{marginBottom: 20}}>{this.state.ssid}</Text>
+                                <TouchableOpacity style={styles.settingList}>  
+                                    <WifiCard>
+                                        <TextInput 
+                                            placeholder="와이파이 비밀번호를 입력하세요"
+                                            onChangeText= {this.handlePassword}
+                                            value={this.state.wifiPassword}
+                                        />
+                                    </WifiCard>
+                                    
+                                </TouchableOpacity>
+                                <TouchableOpacity style={{flex:0.15, flexDirection:'column-reverse', marginBottom: 10, width:100, height:20}}
+                                    onPress={this.sendPassword}
+                                >
+                                        <WifiCard style={{backgroundColor: '#f7c7b5', borderRadius: 20}}>                            
+                                            <Text center bold style={{color:'#fff', size:30}}>완료</Text>
+                                        </WifiCard>
+                                </TouchableOpacity>
+                            </Block>
+                        </View>
                     </View>
                 </Modal>
 

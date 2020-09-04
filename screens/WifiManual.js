@@ -28,7 +28,7 @@ const backgrounds = [
   ];
 
 
-export default class ResetManual extends Component{
+export default class WifiManual extends Component{
 
     scrollX = new Animated.Value(0);
 
@@ -41,19 +41,6 @@ export default class ResetManual extends Component{
         this.scrollX.addListener(({value}) => {
             this.setState({slideIndex: Math.floor(value / theme.sizes.width)})
         })
-        const DB = await AsyncStorage.getItem('@lucete:devices');
-        if(JSON.parse(DB).device.length >= 6){
-            Alert.alert(
-                "기기등록 초과",
-                "최대 등록 가능 기기 개수가 초과하였습니다.",
-                [
-                    {
-                        text:'이전 화면으로',
-                        onPress: () => this.props.navigation.navigate('Dashboard'),
-                    }
-                ]
-            )
-        }
         
     }
 
@@ -110,7 +97,7 @@ export default class ResetManual extends Component{
                     </TouchableOpacity>
                     
                     <Text center caption style={{marginTop: 10, marginBottom: 5, marginHorizontal: 30}}>
-                        스마트 커튼엔진 LUCETE를 사용하기 위해서는 기기와의 와이파이 연결이 필요합니다.
+                        와이파이 재설정을 위해서 LUCETE 기기 연결이 필요합니다.
                         설정 창에서 연결을 완료한 후 진행해주세요!
                     </Text>
                     <Text h4 bold>커튼콜 디바이스 연결 필요</Text>

@@ -130,6 +130,7 @@ class Overview extends Component{
 
             currentLongitude: '',
             currentLatitude: '',
+
             
         }
         /* 커튼 컨트롤 변수 */
@@ -163,10 +164,13 @@ class Overview extends Component{
     powerOn = () => {
         this.setState({powerStatus: !this.state.powerStatus})
         if(!this.state.powerStatus){
-            this.refs.toast.show('Power On!', DURATION.LENGTH_LONG);
+            global.client_server.write('APP '+currentDevice.deviceID+' 1'); // 서버에게 power on 전송
+            this.refs.toast.show('절전모드가 실행되었습니다!', DURATION.LENGTH_LONG);
+           
         }
         else{
-            this.refs.toast.show('Power Off!', DURATION.LENGTH_LONG);
+            global.client_server.write('APP '+currentDevice.deviceID+' 0');
+            this.refs.toast.show('절전모드가 해제되었습니다!', DURATION.LENGTH_LONG); // 서버에게 power off 전송
         }
     }
 
@@ -600,6 +604,16 @@ class Overview extends Component{
         Info = JSON.parse(DB);
         var i = 0;
         
+        global.client_server=TcpSocket.createConnection({
+            port: 4000,
+            host: '34.204.118.236',
+            tls: false,
+            //interface: 'wifi',
+            //localAddress: '192.168.4.101',
+        }, () => {
+            //global.client.write('APPSETTING INITIALIZINGSTART \n');
+        });
+
         for(let singleDevice of Info.device){
             console.log('for문 실행')
             if(singleDevice.deviceID === deviceID){
@@ -785,6 +799,83 @@ class Overview extends Component{
         //Toast2.show('와이파이 비밀번호 확인 후 커튼설정 창으로 이동됩니다.')
         global.client.write('APPSETTING SSID '+'\"'+this.state.ssid+'\"\nAPPSETTING PW '+'\"'+this.state.wifiPassword+'\"\nAPPSETTING LOCATION '+this.state.currentLatitude+' '+this.state.currentLongitude+' \nAPPSETTING TOPSETTINGSTART \n');
        
+    }
+
+    /* 서버에 모드 보내는 함수 */
+
+    // 첫번째 우선순위 모드 서버에게 전송
+    sendServerFrequent1 = () => {
+        const frequent = this.state.frequent1;
+        const power = this.state.powerStatus;
+        const modeNumber = 0;
+        
+        if(frequent === '에너지 효율 모드'){
+            modeNumber = 1;
+        }
+        else if(frequent === '조경 모드'){
+            modeNumber = 2;
+        }
+        else if(frequent === '방범 모드'){
+            modeNumber = 3;
+        }
+        else if(frequent === '알람 모드'){
+            modeNumber = 4;
+        }
+        if(power == true){
+            power = 1;
+        }
+        else if(power == false){
+            power = 0;
+        }
+        global.client_server.write('APP '+currentDevice.deviceID+' '+power+' '+modeNumber);
+    }
+    // 두번째 우선순위 모드 서버에게 전송
+    sendServerFrequent2 = () => { 
+        const frequent = this.state.frequent2;
+        const power = this.state.powerStatus;
+        const modeNumber =0 ;
+        
+        if(frequent === '에너지 효율 모드'){
+            modeNumber = 1;
+        }
+        else if(frequent === '조경 모드'){
+            modeNumber = 2;
+        }
+        else if(frequent === '방범 모드'){
+            modeNumber = 3;
+        }
+        else if(frequent === '알람 모드'){
+            modeNumber = 4;
+        }
+        if(power == true){
+            power = 1;
+        }
+        else if(power == false){
+            power = 0;
+        }
+        global.client_server.write('APP '+currentDevice.deviceID+' '+power+' '+modeNumber);
+    }
+
+    sendServerMode = () => {
+        const mode = 0;
+        const power = this.state.powerStatus;
+        if(this.state.inOnEnergySwitch == true){
+            mode = 1;
+            global.client_server.write('APP '+currentDevice.deviceID+' '+power+' '+mode);
+        }
+        else if(this.state.isOnLandScapeSwitch == true){
+            mode = 2;
+            global.client_server.write('APP '+currentDevice.deviceID+' '+power+' '+mode);
+        }
+        else if(this.state.isOnPreventionSwitch == true){
+            mode = 3;
+            global.client_server.write('APP '+currentDevice.deviceID+' '+power+' '+mode+' '+currentDevice.alarm);
+        }
+        else if(this.state.isOnAlarmSwitch == true){
+            mode = 4;
+            global.client_server.write('APP '+currentDevice.deviceID+' '+power+' '+mode+' '+currentDevice.autoGap);
+        }
+
     }
 
     render(){
@@ -1160,7 +1251,7 @@ class Overview extends Component{
                                                 this.setState({isOnPreventionSwitch: false});
                                                 this.setState({isOnAlarmSwitch: false});
                                                 this.onToggle(isOnFrequent1);
-                                               
+                                                this.sendServerFrequent1;
                                             }}
                                         />
                                 </Block2>
@@ -1180,6 +1271,7 @@ class Overview extends Component{
                                                 this.setState({isOnPreventionSwitch: false});
                                                 this.setState({isOnAlarmSwitch: false});
                                                 this.onToggle(isOnFrequent2);
+                                                this.sendServerFrequent2;
                                             }}
                                         />
                                 </Block2>
@@ -1231,6 +1323,7 @@ class Overview extends Component{
                                             this.setState({isOnFrequent1: false});
                                             this.setState({isOnAlarmSwitch: false});
                                             this.onToggle(isOnEnergySwitch);
+                                            this.sendServerMode;
                                         }}
                                     />
                                 </Block2>
@@ -1251,6 +1344,7 @@ class Overview extends Component{
                                             this.setState({isOnFrequent1: false});
                                             this.setState({isOnAlarmSwitch: false});
                                             this.onToggle(isOnLandScapeSwitch);
+                                            this.sendServerMode;
                                         }}
                                     />
                                 </Block2>
@@ -1273,6 +1367,7 @@ class Overview extends Component{
                                             this.setState({isOnFrequent1: false});
                                             this.setState({isOnAlarmSwitch: false});
                                             this.onToggle(isOnPreventionSwitch);
+                                            this.sendServerMode;
                                         }}
                                     />
                                 </Block2>
@@ -1293,6 +1388,7 @@ class Overview extends Component{
                                             this.setState({isOnFrequent1: false});
                                             this.setState({isOnAlarmSwitch});
                                             this.onToggle(isOnAlarmSwitch);
+                                            this.sendServerMode;
                                         }}
                                     />
                                 </Block2>

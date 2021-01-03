@@ -1,4 +1,4 @@
-<img src="https://user-images.githubusercontent.com/55680343/103478693-cadcb200-4e0b-11eb-9f90-94098dedc117.png" width="100%" height="300">
+<p align="center"><img src="https://user-images.githubusercontent.com/55680343/103478693-cadcb200-4e0b-11eb-9f90-94098dedc117.png" width="60%" height="300"></p>
 
 <div>
   <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/sehoHwang/Curtaincall?style=social">
@@ -33,3 +33,18 @@
 ScreenShots
 --------------
 
+<div margin:30>
+  <img src="https://user-images.githubusercontent.com/55680343/103479273-efd32400-4e0f-11eb-886f-712624b6d092.png" width="250">
+  <img src="https://user-images.githubusercontent.com/55680343/103479274-f5c90500-4e0f-11eb-8372-afc8a21f0386.png" width="250">
+  <img src="https://user-images.githubusercontent.com/55680343/103479276-fa8db900-4e0f-11eb-90da-9eca71fb64f8.png" width="250">
+  <img src="https://user-images.githubusercontent.com/55680343/103479279-ff526d00-4e0f-11eb-8327-f60f498b2725.png" width="250">
+  <img src="https://user-images.githubusercontent.com/55680343/103479280-037e8a80-4e10-11eb-8688-aa56e77f1014.png" width="250">
+</div>
+
+
+
+
+
+Google Store
+----------------
+https://play.google.com/store/apps/details?id=com.curtaincall

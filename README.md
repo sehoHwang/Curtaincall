@@ -26,7 +26,9 @@ Features
 - 알람 모드
 
 
-Architecturs
+Architectures
 ----
 
-![Curtaincall_architecture](https://user-images.githubusercontent.com/55680343/116848479-aeb91800-ac27-11eb-9e9b-4acac0aee1e0.png)
+![그림2](https://user-images.githubusercontent.com/55680343/116883193-48042080-ac60-11eb-8dd8-629cf802fb69.png)
+
+

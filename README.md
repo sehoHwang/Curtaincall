@@ -17,7 +17,7 @@ Google Store
 https://play.google.com/store/apps/details?id=com.curtaincall
 
 
-## Features
+Features
 ----
 - 일반 모드
 - 에너지 효율 모드
@@ -26,7 +26,7 @@ https://play.google.com/store/apps/details?id=com.curtaincall
 - 알람 모드
 
 
-## Architecturs
+Architecturs
 ----
 
 ![Curtaincall_architecture](https://user-images.githubusercontent.com/55680343/116848479-aeb91800-ac27-11eb-9e9b-4acac0aee1e0.png)

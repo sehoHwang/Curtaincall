@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
-import {Image, StyleSheet, Button, TouchableWithoutFeedback, ScrollView, SafeAreaView, TouchableOpacity, Animated, Alert,} from 'react-native';
+import {Image, StyleSheet, TouchableWithoutFeedback, TouchableOpacity, Animated} from 'react-native';
 import {Block, Text} from '../components';
 import * as theme from '../theme';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import AsyncStorage from '@react-native-community/async-storage';
 import {background} from '../components/images';
 
 const backgrounds = [
@@ -37,7 +36,6 @@ export default class WifiManual extends Component{
     }
 
     componentDidMount= async(navigation) => {
-        //AsyncStorage.clear();
         this.scrollX.addListener(({value}) => {
             this.setState({slideIndex: Math.floor(value / theme.sizes.width)})
         })
@@ -76,13 +74,9 @@ export default class WifiManual extends Component{
                 <Block style={{flex:1}} center key={'img-${index}'} style={{width: theme.sizes.width, marginTop: 40}}>
                 <Image source={background.welcome} resizeMode='center' style={{height:"100%", width: 400}}/>
                 </Block>
-            
-            
         </Block>
         )
     }
-
-
 
     render(){
         const {navigation} = this.props;
@@ -101,8 +95,6 @@ export default class WifiManual extends Component{
                         설정 창에서 연결을 완료한 후 진행해주세요!
                     </Text>
                     <Text h4 bold>커튼콜 디바이스 연결 필요</Text>
-                    
-                   
                 </Block>
                 
             </Block>

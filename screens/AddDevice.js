@@ -1,19 +1,13 @@
 import React, {Component} from 'react';
-import { View, StyleSheet, TouchableWithoutFeedback, ScrollView, SafeAreaView, Image, TouchableOpacity, Modal, Switch, Platform, TouchableHighlight, Button, TextInput, Alert, } from 'react-native';
-import  {Block, Block2, Card, Icon, Label, Card2, ModeCard, PreventionCard, Text, DeviceCard, WifiCard} from '../components'
+import { View, StyleSheet, TouchableWithoutFeedback, ScrollView, TouchableOpacity, Modal, Platform, TextInput } from 'react-native';
+import  {Block, Text, WifiCard} from '../components'
 import { PermissionsAndroid } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import WifiManager from "react-native-wifi-reborn";
-import { NetworkInfo } from "react-native-network-info";
-import io from 'socket.io-client';
 import TcpSocket from 'react-native-tcp-socket';
-import base64 from 'react-native-base64';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import WifiList from '../components/WifiList';
 import Toast2 from 'react-native-simple-toast';
 import Geolocation from '@react-native-community/geolocation';
-import SQLite from 'react-native-sqlite-storage';
 import AsyncStorage from '@react-native-community/async-storage'
 
 var iconv = require('iconv-lite'); // 인코딩, 디코딩 변수
@@ -56,10 +50,8 @@ export default class AddDevice extends Component{
             host: '192.168.4.100',
             tls: false,
             interface: 'wifi',
-            //localAddress: '192.168.4.101',
         }, () => {
             global.client.write('APPSETTING CONNECTED \nAPPSETTING INITIALIZINGSTART \n');
-            //global.client.write('APPSETTING INITIALIZINGSTART \n');
         });
 
         this.state= {
@@ -100,14 +92,12 @@ export default class AddDevice extends Component{
         }
         
         global.client.on('data', async(data) => {
-            //console.log('message was received', data);
             
             var strData="";
             var tokenData="";
             let dataLen = data.length;
             for(var i=0; i<dataLen; i++){
                 strData+=String.fromCharCode(data[i]);
-                //console.log('message is', String.fromCharCode(data[i]));
             }
             console.log('message is', strData);
             this.onChagneValue(strData);
@@ -126,7 +116,6 @@ export default class AddDevice extends Component{
                 if(deviceDBJSON.device != null){
                     for(let singleDevice of deviceDBJSON.device){
                         if(singleDevice.deviceID == this.state.deviceID){
-                            console.log('이미 등록된 아이디');
                             //error 문구(중복아이디 존재)
                             deviceDuplicated = true;
                             break;
@@ -160,9 +149,6 @@ export default class AddDevice extends Component{
 
             else if(tokenData[1] == 'WIFIFAILED'){
                 alert('일치하지 않는 비밀번호 입니다.')
-                /*this.setState({
-                    modalVisible:true,
-                })*/
             }
 
             else if(tokenData[0] == 'APPSETTINGINITIALIZATION'){
@@ -173,13 +159,6 @@ export default class AddDevice extends Component{
             else{
                 this.onAddItem();
             }
-
-            
-        
-            //this.handleCreate(strData)
-
-            //client.end();
-            //console.log('message is', data['data']);
             
         });
         
@@ -194,7 +173,6 @@ export default class AddDevice extends Component{
             }
         });
 
-        //client.setTimeout(30000);
         global.client.on('timeout', () => {
             console.log('socket timeout');
             global.client.end();
@@ -211,7 +189,6 @@ export default class AddDevice extends Component{
 
     /* 현재 위치 불러오는 함수 */
     callLocation(that){
-        //alert("callLocation Called");
             Geolocation.getCurrentPosition(
             // 현재 위치 받아옴
             (position) => {
@@ -296,14 +273,6 @@ export default class AddDevice extends Component{
 
     })
 
-    /* 와이파이 목록 생성 함수 */
-    /*handleCreate = (data) => {
-        //const { wifi } = this.state;
-        this.setState({
-            wifi: this.state.wifi.concat({ id: this.id++, ...data })
-        })
-    }*/
-
     /* 와이파이 생성 함수2 */
 
     onChagneValue = (data) =>{
@@ -315,7 +284,6 @@ export default class AddDevice extends Component{
     onAddItem = () => {
         
         this.setState(state => {
-            //const value_decode = iconv.decode(state.value, 'EUC-KR').toString();
             const list = state.list.concat(state.value);
 
             return {
@@ -353,19 +321,8 @@ export default class AddDevice extends Component{
 
     /* 와이파이 전송 함수 */
     sendPassword = () => {
-        /*this.setState({
-            modalVisible: false,
-            topsettingVisible: true,
-        });*/
         Toast2.show('와이파이 비밀번호 확인 후 커튼설정 창으로 이동됩니다.')
         global.client.write('APPSETTING SSID '+'\"'+this.state.ssid+'\"\nAPPSETTING PW '+'\"'+this.state.wifiPassword+'\"\nAPPSETTING LOCATION '+this.state.currentLatitude+' '+this.state.currentLongitude+' \nAPPSETTING TOPSETTINGSTART \n');
-        //global.client.write('APPSETTING PW '+'\"'+this.state.wifiPassword+'\"\n');
-        //global.client.write('APPSETTING LOCATION '+this.state.currentLatitude+' '+this.state.currentLongitude+' \n');
-        //global.client.write('APPSETTING TOPSETTINGSTART \n');
-        //global.client.write(this.state.wifiPassword + ' ' + this.state.currentLongitude + ' ' + this.state.currentLatitude);
-        //global.client.write(this.state.currentLongitude);
-       //global.client.write(this.state.currentLatitude);
-       
     }
 
     /* 커튼 높이 설정 함수 */
@@ -424,84 +381,9 @@ export default class AddDevice extends Component{
         console.log('Async db 저장 성공적!')
     }
 
-    /*addDevice = () => {
-        
-        const newDevice = { deviceID: 'lucete4', deviceName: '안방', firstMode: '방범 모드', secondMode: '알람 모드'}
-        this.setState({
-            deviceID: '',
-            deviceName: '',
-            firstMode: '',
-            secondMode: '',
-            devices: this.state.devices.concat(newDevice),
-        }, this.saveDevice)
-    }*/
     render(){
         const { wifi } = this.state;
         const {navigation} = this.props;
-        //const {navigation} = this.props;
-        /*const client = TcpSocket.createConnection({
-            port: 80,
-            host: '192.168.4.100',
-            tls: false,
-            interface: 'wifi',
-            //localAddress: '192.168.4.101',
-        }, () => {
-            client.write('APPSETTING CONNECTED');
-            
-        });*/
-
-        
-        
-        // Write on the socket
-        
-        
-        /*
-        // Get Local IP
-        NetworkInfo.getIPAddress().then(ipAddress => {
-        console.log(ipAddress);
-        });
-        
-        // Get IPv4 IP (priority: WiFi first, cellular second)
-        NetworkInfo.getIPV4Address().then(ipv4Address => {
-        console.log(ipv4Address);
-        });
-        
-        // Get Broadcast
-        NetworkInfo.getBroadcast().then(broadcast => {
-        console.log(broadcast);
-        });
-        
-        // Get SSID
-        NetworkInfo.getSSID().then(ssid => {
-        console.log(ssid);
-        });
-        
-        // Get BSSID
-        NetworkInfo.getBSSID().then(bssid => {
-        console.log(bssid);
-        });
-        
-        // Get Subnet
-        NetworkInfo.getSubnet().then(subnet => {
-        console.log(subnet);
-        });
-        
-        // Get Default Gateway IP
-        NetworkInfo.getGatewayIPAddress().then(defaultGateway => {
-        
-        console.log(defaultGateway);
-        this.setState({
-            connectIP: defaultGateway,
-        })
-        });
-        
-        // Get frequency (supported only for Android)
-        NetworkInfo.getFrequency().then(frequency => {
-        console.log(frequency);
-        });*/
-
-          
-        
         
         return(
             <Block style={{marginHorizontal : 20}}>

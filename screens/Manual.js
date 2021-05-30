@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Image, StyleSheet, Button, TouchableWithoutFeedback, ScrollView, SafeAreaView, TouchableOpacity, Animated, Alert,} from 'react-native';
+import {Image, StyleSheet, Button, TouchableWithoutFeedback, TouchableOpacity, Animated, Alert} from 'react-native';
 import {Block, Text} from '../components';
 import * as theme from '../theme';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -37,7 +37,6 @@ export default class Manual extends Component{
     }
 
     componentDidMount= async(navigation) => {
-        //AsyncStorage.clear();
         this.scrollX.addListener(({value}) => {
             this.setState({slideIndex: Math.floor(value / theme.sizes.width)})
         })

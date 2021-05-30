@@ -1,20 +1,16 @@
 import React, { Component, } from 'react';
-import { TextInput, View, StyleSheet, TouchableWithoutFeedback, ScrollView, SafeAreaView, Image, TouchableOpacity, Modal, Switch, Platform, TouchableHighlight, Alert} from 'react-native';
+import { TextInput, View, StyleSheet, TouchableWithoutFeedback, ScrollView, SafeAreaView, TouchableOpacity, Modal, Platform, Alert} from 'react-native';
 import * as theme from '../theme'
-import  {Block, Block2, Card, Icon, Label, Card2, ModeCard, PreventionCard, WifiCard} from '../components'
+import  {Block, Block2, Card, Card2, ModeCard, PreventionCard, WifiCard} from '../components'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {Text} from '../components'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Animated from 'react-native-reanimated';
 import BottomPopup from './BottomPopup';
-import LinearGradient from 'react-native-linear-gradient';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import ToggleSwitch from 'toggle-switch-react-native';
-import DateTimePicker from 'react-native-modal-datetime-picker';
-import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Toast, {DURATION} from 'react-native-easy-toast';
-import ModalSelector from 'react-native-modal-selector';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-community/async-storage';
 import Toast2 from 'react-native-simple-toast';
@@ -23,7 +19,6 @@ import TcpSocket from 'react-native-tcp-socket';
 let currentDevice;
 let currentDeviceNumber;
 let Info;
-let deviceTitle;
 const styles = StyleSheet.create({
     overview: {
         flex: 1,
@@ -41,7 +36,6 @@ const styles = StyleSheet.create({
         shadowRadius: 20,
         shadowOffset: {width: -20, height: 10},
         elevation: 1,
-        // box-shadow: 0 10px 20px 0 rgba(46, 91, 255, 0.07);
     },
     margin: {
         marginHorizontal: 25,
@@ -175,7 +169,6 @@ class Overview extends Component{
     }
 
     callLocation(that){
-        //alert("callLocation Called");
             Geolocation.getCurrentPosition(
             // 현재 위치 받아옴
             (position) => {
@@ -302,10 +295,8 @@ class Overview extends Component{
             host: '192.168.4.100',
             tls: false,
             interface: 'wifi',
-            //localAddress: '192.168.4.101',
         }, () => {
             global.client.write('APPSETTING CONNECTED \nAPPSETTING TOPSETTINGSTART \n');
-            //global.client.write('APPSETTING INITIALIZINGSTART \n');
         });
     }
 
@@ -608,8 +599,6 @@ class Overview extends Component{
             port: 4000,
             host: '34.204.118.236',
             tls: false,
-            //interface: 'wifi',
-            //localAddress: '192.168.4.101',
         }, () => {
             //global.client.write('APPSETTING INITIALIZINGSTART \n');
         });
@@ -651,7 +640,7 @@ class Overview extends Component{
 
    resettingWifi = () => {
        this.setState({
-           modalVisible:false, // 시발 이거 변수 바꿔라 개새끼야!
+           modalVisible:false,
            wifiManualVisible: true,
        })
        if(Platform.OS === 'ios'){
@@ -705,7 +694,6 @@ class Overview extends Component{
             host: '192.168.4.100',
             tls: false,
             interface: 'wifi',
-            //localAddress: '192.168.4.101',
         }, () => {
             global.client.write('APPSETTING CONNECTED \nAPPSETTING WIFILIST \n');
             //global.client.write('APPSETTING INITIALIZINGSTART \n');
@@ -716,14 +704,12 @@ class Overview extends Component{
            wifiListVisible: true,
        })
        global.client.on('data', async(data) => {
-        //console.log('message was received', data);
         
         var strData="";
         var tokenData="";
         let dataLen = data.length;
         for(var i=0; i<dataLen; i++){
             strData+=String.fromCharCode(data[i]);
-            //console.log('message is', String.fromCharCode(data[i]));
         }
         console.log('message is', strData);
         this.onChagneValue(strData);
@@ -741,25 +727,18 @@ class Overview extends Component{
 
         else if(tokenData[1] == 'WIFIFAILED'){
             alert('일치하지 않는 비밀번호 입니다.')
-            /*this.setState({
-                modalVisible:true,
-            })*/
         }
 
         else{
             this.onAddItem();
         }
     });
-
-       //alert('와이파이 목록을 불러옵니다...');
    }
 
    onAddItem = () => {
         
     this.setState(state => {
-        //const value_decode = iconv.decode(state.value, 'EUC-KR').toString();
         const list = state.list.concat(state.value);
-
         return {
             list,
             value: '',
@@ -796,7 +775,6 @@ class Overview extends Component{
             passwordVisible: false,
             
         });
-        //Toast2.show('와이파이 비밀번호 확인 후 커튼설정 창으로 이동됩니다.')
         global.client.write('APPSETTING SSID '+'\"'+this.state.ssid+'\"\nAPPSETTING PW '+'\"'+this.state.wifiPassword+'\"\nAPPSETTING LOCATION '+this.state.currentLatitude+' '+this.state.currentLongitude+' \nAPPSETTING TOPSETTINGSTART \n');
        
     }
@@ -1286,18 +1264,11 @@ class Overview extends Component{
                             <Card title="알람 모드 시간"
                             middle style={[{marginRight: 7}]}
                             deviceID = {navigation.getParam('id')}>
-                                {/*<Icon vehicle />*/}
-                                {/*<TouchableWithoutFeedback onPress={this.showPicker}>
-                                    <MaterialCommunityIcons  name='dots-vertical' size={20} color={'#ff7f50'}/>
-                                        </TouchableWithoutFeedback>*/}
-                                {/*<Text h2 bold style={{marginTop: 15}}>7:00 AM</Text>*/}
                                 <Text paragraph color="gray">Set the Alarm</Text>
                             </Card>
                             <PreventionCard title="방범 모드 간격"
                             middle style={[{marginLeft: 7}]}
                             deviceID = {navigation.getParam('id')}>
-                                {/*<Icon distance />*/}
-                                {/*<Text h2 bold style={{marginTop: 15}}>1hour</Text>*/}
                                 <Text paragraph color="gray">Set the Gap</Text>
                             </PreventionCard>
                         </Block2>
@@ -1395,99 +1366,12 @@ class Overview extends Component{
                             </Block2>
                            
                         </ModeCard>
-
-                        {/*<Card 
-                            title="TOP DRIVERS"
-                             style={[{marginTop: 18}]}>
-                            <Block2 style={styles.driver}>
-                                <TouchableOpacity activeOpacity={0.8}>
-                                    <Block2 row center>
-                                        <Block2>
-                                            <Image source = {{uri: 'https://images.unsplash.com/photo-1506244856291-8910ea843e81?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80'}} style={styles.avatar}/>
-                                        </Block2>
-                                        <Block2>
-                                            <Text h4>Seho</Text>
-                                            <Text paragraph color="gray">
-                                                Volvo Intellisafe
-                                            </Text>
-                                        </Block2>
-                                        <Block2>
-                                            <Text paragraph right color="black">
-                                                $6,432
-                                            </Text>
-                                            <Text paragraph right color="gray">
-                                                1,232 miles
-                                            </Text>
-                                        </Block2>
-                                    </Block2>
-                                </TouchableOpacity>
-                            </Block2>
-                            <Block2 style={styles.driver}>
-                                <TouchableOpacity activeOpacity={0.8}>
-                                    <Block2 row center>
-                                        <Block2>
-                                            <Image source= {{uri: 'https://images.unsplash.com/photo-1521657249896-063c0c611fe5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80'}} style={styles.avatar}/>
-                                        </Block2>
-                                        <Block2>
-                                            <Text h4>Seho</Text>
-                                            <Text paragraph color="gray">
-                                                Chevorlet Intellisafe
-                                            </Text>
-                                        </Block2>
-                                        <Block2>
-                                            <Text paragraph right color="black">
-                                                $6,432
-                                            </Text>
-                                            <Text paragraph right color="gray">
-                                                1,232 miles
-                                            </Text>
-                                        </Block2>
-                                    </Block2>
-                                </TouchableOpacity>
-                            </Block2>
-                            <Block2 style={styles.driver}>
-                                <TouchableOpacity activeOpacity={0.8}>
-                                    <Block2 row center>
-                                        <Block2>
-                                            <Image source={{uri:'https://images.unsplash.com/photo-1536700503339-1e4b06520771?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80' }} style={styles.avatar} />
-                                        </Block2>
-                                        <Block2>
-                                            <Text h4>Seho</Text>
-                                            <Text paragraph color="gray">
-                                                Infiniti dasd
-                                            </Text>
-                                        </Block2>
-                                        <Block2>
-                                            <Text paragraph right color="black">
-                                                $6,432
-                                            </Text>
-                                            <Text paragraph right color="gray">
-                                                1,232 miles
-                                            </Text>
-                                        </Block2>
-                                    </Block2>
-                                </TouchableOpacity>
-                            </Block2>
-                            
-                        </Card>
-                        
-                        */}
                          
-                        
                 </SafeAreaView>
                
                 </ScrollView>
                 <BottomPopup title="Demo Popup" ref={(target) => this.popupRef = target} onTouchOutside={this.onClosePopup} data={popupList}></BottomPopup>
-                {/*<DateTimePicker
-                            isVisible={this.state.isVisible}
-                            onConfirm={this.handlePicker}
-                            onCancel={this.hidePicker}
-                />*/}
             </View>
-           
-            
-                
-          
         )
     }
 }

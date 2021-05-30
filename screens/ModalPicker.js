@@ -24,7 +24,6 @@ export default class ModalPicker extends Component {
 
     closeModal = (bool) => {
         this.props.changeModalVisibility(bool)
-        //this.setState({ selectedItem: '' })
     }
     
     render() {

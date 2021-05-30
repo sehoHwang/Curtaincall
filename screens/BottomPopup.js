@@ -1,4 +1,4 @@
-import { Modal, Dimensions, TouchableWithoutFeedback, StyleSheet, View, Text, FlatList} from 'react-native';
+import { Modal, Dimensions, TouchableWithoutFeedback, View, Text, FlatList} from 'react-native';
 import React, {Component} from 'react';
 const deviceHeight = Dimensions.get('window').height;
 

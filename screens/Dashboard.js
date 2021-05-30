@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
-import {StyleSheet, View, ScrollView, TouchableOpacity, Image, Platform } from 'react-native'
+import {StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
 import { Block, Text } from '../components';
 import * as theme from '../theme';
 import mocks from '../setting';
 import GradientHeader from "react-native-gradient-header";
-import GetLocation from 'react-native-get-location';
 import AsyncStorage from '@react-native-community/async-storage';
 
 
@@ -57,8 +56,6 @@ class Dashboard extends Component{
     }
 
     async componentDidMount(){
-        //const {firstDevice, secondDevice, thirdDevice, fourthDevice, fifthDevice, sixthDevice} = this.state;
-        
         var i =0;
         const DB = await AsyncStorage.getItem('@lucete:devices');
        
@@ -205,39 +202,6 @@ class Dashboard extends Component{
                             </TouchableOpacity>
                         ) : null}
                         </Block>
-                    
-                        {/*
-                        <Block row space="around">
-                            <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('Settings', {name: 'LUCETE3'})}>
-                                <Block center middle style={styles.button}>
-                                    <ThirdIcon size={50}/>
-                                    <Text button>{setting['LUCETE3'].name}</Text>
-                                </Block>
-                            </TouchableOpacity>
-                            <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('Settings', {name: 'LUCETE4'})}>
-                                <Block center middle style={styles.button}>
-                                    <FourthIcon size={50}/>
-                                    <Text button>{this.state['lucete3'].name}</Text>
-                                </Block>
-                            </TouchableOpacity>
-                        </Block>
-                    
-                    
-                        <Block row space="around">
-                            <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('RctSockets', {name: 'LUCETE5'})}>
-                                <Block center middle style={styles.button}>
-                                    <FifthIcon size={50}/>
-                                    <Text button>{setting['LUCETE5'].name}</Text>
-                                </Block>
-                            </TouchableOpacity>
-                            <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('Location', {name: 'LUCETE6'})}>
-                                <Block center middle style={styles.button}>
-                                    <SixthIcon size={50}/>
-                                    <Text button>{setting['LUCETE6'].name}</Text>
-                                </Block>
-                            </TouchableOpacity>
-                        </Block>*/}
-                        
                     </Block>
                     
                 </ScrollView>
@@ -256,10 +220,8 @@ Dashboard.defaultProps = {
 
 const styles = StyleSheet.create({
     dashboard: {
-        //paddingHorizontal: theme.sizes.base*2,
         flex: 1,
         backgroundColor: 'white',
-        //paddingTop: 30,
     },
     button: {
         backgroundColor: theme.colors.button,

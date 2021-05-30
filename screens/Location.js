@@ -1,6 +1,5 @@
 import React from 'react';
 //import react in our code. 
-
 import {View, Text,  StyleSheet, Image ,PermissionsAndroid,Platform} from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 //import all the components we are going to use.
@@ -39,7 +38,6 @@ export default class Location extends React.Component {
         }    
     }
     callLocation(that){
-        //alert("callLocation Called");
             Geolocation.getCurrentPosition(
             // 현재 위치 받아옴
             (position) => {

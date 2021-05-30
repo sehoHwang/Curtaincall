@@ -10,8 +10,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-import {Actions} from 'react-native-router-flux';
-
 /* Logo */
 import Logo from '../assets/images/icons/LUCETE-LOGO2.png';
 
@@ -48,7 +46,6 @@ class LoadingScene extends Component {
         loadingSpinner: true,
       });
 
-      //setTimeout(switchToDashboard, 1500);
       setTimeout( () => {
           this.props.navigation.navigate('Dashboard');
         }, 1500);
